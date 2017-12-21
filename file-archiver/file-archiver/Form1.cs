@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace file_archiver
 {
@@ -17,7 +18,19 @@ namespace file_archiver
         {
             InitializeComponent();
             groupBox1.Text = ConfigurationSettings.AppSettings.Get("folderPath");
+            fillComboKurul();
         }
+
+        string[] kurulNames = Directory.GetDirectories(ConfigurationSettings.AppSettings.Get("folderPath"));
+
+        void fillComboKurul()
+        {
+            foreach (var item in kurulNames)
+            {
+                comboBox1.Items.Add(item.ToString().Split('\\')[item.ToString().Split('\\').Length-1]);
+            }
+        }
+
 
         public void changeColorTextboxExcel (TextBox tb)
         {
@@ -35,7 +48,6 @@ namespace file_archiver
             }
         }
 
-        //private void button1_Click(object sender, EventArgs e) => textBox1.Text = ConfigurationSettings.AppSettings.Get("folderPath");
 
         private void button2_Click(object sender, EventArgs e)
         {
