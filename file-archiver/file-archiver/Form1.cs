@@ -19,7 +19,21 @@ namespace file_archiver
             InitializeComponent();
             groupBox1.Text = ConfigurationSettings.AppSettings.Get("folderPath");
             fillComboKurul();
+
+            if (comboBox1.Items.Count > 0)
+            {
+                comboBox1.SelectedIndex = 0;
+            }
+            else
+            {
+                MessageBox.Show("Kurul Listesi Alınamadı! Lütfen Dosya Yolunu Düzeltiniz!");
+            }
+            changeColorComboKurul(comboBox1);
+            changeColorTextboxExcel(textBox2);
         }
+
+        //Arşiv folder path
+        string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
 
         string[] kurulNames = Directory.GetDirectories(ConfigurationSettings.AppSettings.Get("folderPath"));
 
@@ -31,6 +45,19 @@ namespace file_archiver
             }
         }
 
+        public void changeColorComboKurul(ComboBox cb)
+        {
+            if (cb.SelectedItem.ToString().Length>0)
+            {
+                cb.BackColor = Color.LightGreen;
+                cb.ForeColor = Color.DarkGreen;
+            }
+            else
+            {
+                cb.BackColor = Color.LightPink;
+                cb.ForeColor = Color.DarkRed;
+            }
+        }
 
         public void changeColorTextboxExcel (TextBox tb)
         {
@@ -51,7 +78,16 @@ namespace file_archiver
 
         private void button2_Click(object sender, EventArgs e)
         {
+            string path = mainPath + comboBox1.SelectedItem.ToString()+"\\";
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            if (Directory.Exists(path))
+            {
+                openFileDialog1.InitialDirectory = path;
+            }
+            else
+            {
+                openFileDialog1.InitialDirectory = mainPath;
+            }
             openFileDialog1.Filter = "Excel Files |*.xls;*.xlsx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -63,6 +99,11 @@ namespace file_archiver
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             changeColorTextboxExcel(textBox2);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            changeColorComboKurul(comboBox1);
         }
     }
 }
