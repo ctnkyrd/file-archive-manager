@@ -84,6 +84,21 @@ namespace file_archiver
             }
         }
 
+        void getExcelSheets(string excelFile)
+        {
+            listBox1.Items.Clear();
+            var application = new Microsoft.Office.Interop.Excel.Application();
+            var workbook = application.Workbooks.Open(excelFile);
+
+            for (var i= 0; i<workbook.Worksheets.Count;i++)
+            {
+                var worksheet = workbook.Worksheets[i+1] as Microsoft.Office.Interop.Excel.Worksheet;
+                //listBox1.Items.Add(worksheet.ToString());
+                var sheetName = worksheet.Name.ToString();
+                //MessageBox.Show(item.ToString());
+            }
+        }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -102,6 +117,7 @@ namespace file_archiver
             {
                 textBox2.Text = openFileDialog1.FileName;
                 changeColorTextboxExcel(textBox2);
+                getExcelSheets(textBox2.Text);
             }
         }
 
