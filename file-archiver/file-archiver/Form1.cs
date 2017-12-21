@@ -9,15 +9,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.Office.Interop.Excel;
 
 namespace file_archiver
 {
     public partial class Form1 : Form
     {
+#pragma warning disable CS0618 // Type or member is obsolete
+        public static string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
+#pragma warning restore CS0618 // Type or member is obsolete
+        string[] kurulNames = Directory.GetDirectories(mainPath);
+
         public Form1()
         {
             InitializeComponent();
-            groupBox1.Text = ConfigurationSettings.AppSettings.Get("folderPath");
+
+            
             fillComboKurul();
 
             if (comboBox1.Items.Count > 0)
@@ -30,12 +37,14 @@ namespace file_archiver
             }
             changeColorComboKurul(comboBox1);
             changeColorTextboxExcel(textBox2);
+
+            groupBox1.Text = mainPath;
         }
 
         //Arşiv folder path
-        string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
 
-        string[] kurulNames = Directory.GetDirectories(ConfigurationSettings.AppSettings.Get("folderPath"));
+         
+
 
         void fillComboKurul()
         {
@@ -59,7 +68,7 @@ namespace file_archiver
             }
         }
 
-        public void changeColorTextboxExcel (TextBox tb)
+        public void changeColorTextboxExcel (System.Windows.Forms.TextBox tb)
         {
             string fileExtension = tb.Text.Split('.')[tb.Text.Split('.').Length - 1];
 
