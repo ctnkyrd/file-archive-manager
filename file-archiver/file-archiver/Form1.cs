@@ -48,6 +48,9 @@ namespace file_archiver
          
         public void ililceGrid()
         {
+            dataGridView1.DataSource = null;
+            label4.Text = "Yükleniyor...";
+            label4.Visible = true;
             var excelName = textBox1.Text;
             var application = new Microsoft.Office.Interop.Excel.Application();
             var workbook = application.Workbooks.Open(excelName);
@@ -57,39 +60,57 @@ namespace file_archiver
             //int totalRows = mySheet.UsedRange.Rows.Count;
 
             int rowCount = worksheet_1.UsedRange.Rows.Count;
+            int columnCount = worksheet_1.UsedRange.Columns.Count;
 
-
-            System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
-
-            DataColumn c0 = new DataColumn("ilce_id");
-            DataColumn c1 = new DataColumn("ilce_adi");
-            DataColumn c2 = new DataColumn("il_id");
-            DataColumn c3 = new DataColumn("il_adi");
-            DataColumn c4 = new DataColumn("dosya_desimal_kodu");
-
-            ilIlce.Columns.Add(c0);
-            ilIlce.Columns.Add(c1);
-            ilIlce.Columns.Add(c1);
-            ilIlce.Columns.Add(c3);
-            ilIlce.Columns.Add(c4);
-
-            DataRow r1;
-            r1 = ilIlce.NewRow();
-            r1["ilce_id"] = "54";
-            ilIlce.Rows.Add(r1);
-
-            r1["ilce_id"] = 5;
-
-            dataGridView1.DataSource = ilIlce;
-
-            for (int row = 1; row < rowCount; row++)
+            if (columnCount == 5)
             {
+                System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
 
+                ilIlce.Columns.Add("ilce_id");
+                ilIlce.Columns.Add("ilce_adi");
+                ilIlce.Columns.Add("il_id");
+                ilIlce.Columns.Add("il_adi");
+                ilIlce.Columns.Add("dosya_desimal_kodu");
+
+                DataRow row;
+
+                int index = 0;
+                object rowIndex = 2;
+                while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
+                {
+                    rowIndex = 2 + index;
+                    row = ilIlce.NewRow();
+
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+                    row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+                    index++;
+                    ilIlce.Rows.Add(row);
+
+                }
+                application.Workbooks.Close();
+
+                dataGridView1.DataSource = ilIlce;
+                label4.Visible = false;
             }
+
+            else
+            {
+                label4.Text = "Excel Dosyası Hatalı!";
+            }
+
+            
+
         }
 
 
-       public void logging(string logText)
+
+
+
+
+        public void logging(string logText)
         {
             if (richTextBox1.Text.Length==0)
             {
