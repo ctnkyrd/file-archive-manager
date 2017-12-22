@@ -67,6 +67,7 @@ namespace file_archiver
             var workbook = application.Workbooks.Open(excelName);
             var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
 
+            logging(excelName + "-il-ilce Datatable Aktarım Başladı");
 
             int rowCount = worksheet_1.UsedRange.Rows.Count;
             int columnCount = worksheet_1.UsedRange.Columns.Count;
@@ -107,14 +108,17 @@ namespace file_archiver
                 dataGridView1.DataSource = ilIlce;
                 label4.Visible = false;
                 t.Abort();
+                logging(excelName + "-il-ilce Datatable Aktarım Tamamlandı");
+
             }
 
-            
+
 
             else
             {
                 label4.Text = "Excel Dosyası Hatalı!";
             }
+
         }
 
         public void logging(string logText)

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -177,11 +178,12 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Right;
             this.tabControl1.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.tabControl1.Location = new System.Drawing.Point(417, 12);
+            this.tabControl1.Location = new System.Drawing.Point(420, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(616, 293);
+            this.tabControl1.Size = new System.Drawing.Size(616, 322);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
@@ -247,19 +249,20 @@
             this.tabPage4.Controls.Add(this.richTextBox1);
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(608, 263);
+            this.tabPage4.Size = new System.Drawing.Size(608, 292);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Log";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // richTextBox1
             // 
+            this.richTextBox1.BackColor = System.Drawing.Color.Black;
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.richTextBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.richTextBox1.Font = new System.Drawing.Font("Franklin Gothic Book", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.richTextBox1.ForeColor = System.Drawing.Color.Lime;
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(608, 263);
+            this.richTextBox1.Size = new System.Drawing.Size(608, 292);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -321,8 +324,12 @@
             this.ClientSize = new System.Drawing.Size(1036, 322);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Home";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Taranan Arşiv Aktar";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
