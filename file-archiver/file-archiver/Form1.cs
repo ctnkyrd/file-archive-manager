@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.Office.Interop.Excel;
+using System.Threading;
 
 namespace file_archiver
 {
@@ -43,11 +44,16 @@ namespace file_archiver
             groupBox1.Text = mainPath;
         }
 
-        //Arşiv folder path
+        private void StartForm()
+        {
+            System.Windows.Forms.Application.Run(new frmSplash()); 
+        }
 
          
         public void ililceGrid()
         {
+            Thread t = new Thread(new ThreadStart(StartForm));
+
             dataGridView1.DataSource = null;
             label4.Text = "Yükleniyor...";
             label4.Visible = true;
@@ -56,14 +62,13 @@ namespace file_archiver
             var workbook = application.Workbooks.Open(excelName);
             var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
 
-            //int totalColumns = mySheet.UsedRange.Columns.Count;
-            //int totalRows = mySheet.UsedRange.Rows.Count;
 
             int rowCount = worksheet_1.UsedRange.Rows.Count;
             int columnCount = worksheet_1.UsedRange.Columns.Count;
 
             if (columnCount == 5)
             {
+                t.Start();
                 System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
 
                 ilIlce.Columns.Add("ilce_id");
@@ -94,21 +99,16 @@ namespace file_archiver
 
                 dataGridView1.DataSource = ilIlce;
                 label4.Visible = false;
+                t.Abort();
             }
+
+            
 
             else
             {
                 label4.Text = "Excel Dosyası Hatalı!";
             }
-
-            
-
         }
-
-
-
-
-
 
         public void logging(string logText)
         {
@@ -175,6 +175,52 @@ namespace file_archiver
 
             listBox1.Items.Add(sheetName_1);
             listBox1.Items.Add(sheetName_2);
+
+            int rowCountTiff = worksheet_1.UsedRange.Rows.Count;
+            int rowCountPdf = worksheet_2.UsedRange.Rows.Count;
+            int columnCountTiff = worksheet_1.UsedRange.Columns.Count;
+            int columnCountPdf = worksheet_2.UsedRange.Columns.Count;
+
+
+            //if (columnCountTiff == 5)
+            //{
+            //    System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
+
+            //    ilIlce.Columns.Add("ilce_id");
+            //    ilIlce.Columns.Add("ilce_adi");
+            //    ilIlce.Columns.Add("il_id");
+            //    ilIlce.Columns.Add("il_adi");
+            //    ilIlce.Columns.Add("dosya_desimal_kodu");
+
+            //    DataRow row;
+
+            //    int index = 0;
+            //    object rowIndex = 2;
+            //    while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
+            //    {
+            //        rowIndex = 2 + index;
+            //        row = ilIlce.NewRow();
+
+            //        row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+            //        row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+            //        row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+            //        row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+            //        row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+            //        index++;
+            //        ilIlce.Rows.Add(row);
+
+            //    }
+            //    application.Workbooks.Close();
+
+            //    dataGridView1.DataSource = ilIlce;
+            //    label4.Visible = false;
+            //}
+
+            //else
+            //{
+            //    label4.Text = "Excel Dosyası Hatalı!";
+            //}
+
         }
 
 
@@ -244,5 +290,6 @@ namespace file_archiver
             changeColorTextboxExcel(textBox1);
             ililceGrid();
         }
+
     }
 }

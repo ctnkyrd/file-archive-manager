@@ -63,29 +63,9 @@ namespace file_archiver.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _44frgm {
+        internal static System.Drawing.Bitmap loading2 {
             get {
-                object obj = ResourceManager.GetObject("44frgm", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _preloader {
-            get {
-                object obj = ResourceManager.GetObject("_preloader", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap animated_loading_gif_transparent_background_6 {
-            get {
-                object obj = ResourceManager.GetObject("animated-loading-gif-transparent-background-6", resourceCulture);
+                object obj = ResourceManager.GetObject("loading2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
