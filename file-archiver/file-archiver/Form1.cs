@@ -37,6 +37,8 @@ namespace file_archiver
             }
             changeColorComboKurul(comboBox1);
             changeColorTextboxExcel(textBox2);
+            changeColorTextboxExcel(textBox1);
+
 
             groupBox1.Text = mainPath;
         }
@@ -44,6 +46,61 @@ namespace file_archiver
         //Arşiv folder path
 
          
+        public void ililceGrid()
+        {
+            var excelName = textBox1.Text;
+            var application = new Microsoft.Office.Interop.Excel.Application();
+            var workbook = application.Workbooks.Open(excelName);
+            var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+
+            //int totalColumns = mySheet.UsedRange.Columns.Count;
+            //int totalRows = mySheet.UsedRange.Rows.Count;
+
+            int rowCount = worksheet_1.UsedRange.Rows.Count;
+
+
+            System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
+
+            DataColumn c0 = new DataColumn("ilce_id");
+            DataColumn c1 = new DataColumn("ilce_adi");
+            DataColumn c2 = new DataColumn("il_id");
+            DataColumn c3 = new DataColumn("il_adi");
+            DataColumn c4 = new DataColumn("dosya_desimal_kodu");
+
+            ilIlce.Columns.Add(c0);
+            ilIlce.Columns.Add(c1);
+            ilIlce.Columns.Add(c1);
+            ilIlce.Columns.Add(c3);
+            ilIlce.Columns.Add(c4);
+
+            DataRow r1;
+            r1 = ilIlce.NewRow();
+            r1["ilce_id"] = "54";
+            ilIlce.Rows.Add(r1);
+
+            r1["ilce_id"] = 5;
+
+            dataGridView1.DataSource = ilIlce;
+
+            for (int row = 1; row < rowCount; row++)
+            {
+
+            }
+        }
+
+
+       public void logging(string logText)
+        {
+            if (richTextBox1.Text.Length==0)
+            {
+                richTextBox1.Text = DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
+            }
+            else
+            {
+                richTextBox1.Text = richTextBox1.Text + Environment.NewLine + DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
+            }
+            
+        }
 
 
         void fillComboKurul()
@@ -89,14 +146,14 @@ namespace file_archiver
             listBox1.Items.Clear();
             var application = new Microsoft.Office.Interop.Excel.Application();
             var workbook = application.Workbooks.Open(excelFile);
+            var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+            var worksheet_2 = workbook.Worksheets[2] as Microsoft.Office.Interop.Excel.Worksheet;
 
-            for (var i= 0; i<workbook.Worksheets.Count;i++)
-            {
-                var worksheet = workbook.Worksheets[i+1] as Microsoft.Office.Interop.Excel.Worksheet;
-                //listBox1.Items.Add(worksheet.ToString());
-                var sheetName = worksheet.Name.ToString();
-                //MessageBox.Show(item.ToString());
-            }
+            var sheetName_1 = worksheet_1.Name.ToString();
+            var sheetName_2 = worksheet_2.Name.ToString();
+
+            listBox1.Items.Add(sheetName_1);
+            listBox1.Items.Add(sheetName_2);
         }
 
 
@@ -129,6 +186,34 @@ namespace file_archiver
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             changeColorComboKurul(comboBox1);
+            logging(comboBox1.SelectedItem.ToString() + " Kurulu Seçildi!");
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string path = mainPath + comboBox1.SelectedItem.ToString() + "\\";
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            if (Directory.Exists(path))
+            {
+                openFileDialog1.InitialDirectory = path;
+            }
+            else
+            {
+                openFileDialog1.InitialDirectory = mainPath;
+            }
+            openFileDialog1.Filter = "Excel Files |*.xls;*.xlsx";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                textBox1.Text = openFileDialog1.FileName;
+                changeColorTextboxExcel(textBox1);
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            changeColorTextboxExcel(textBox1);
+            ililceGrid();
         }
     }
 }
