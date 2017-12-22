@@ -180,23 +180,31 @@ namespace file_archiver
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string path = mainPath + comboBox1.SelectedItem.ToString()+"\\";
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            if (Directory.Exists(path))
+            if (textBox1.BackColor == Color.LightGreen)
             {
-                openFileDialog1.InitialDirectory = path;
+                string path = mainPath + comboBox1.SelectedItem.ToString() + "\\";
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                if (Directory.Exists(path))
+                {
+                    openFileDialog1.InitialDirectory = path;
+                }
+                else
+                {
+                    openFileDialog1.InitialDirectory = mainPath;
+                }
+                openFileDialog1.Filter = "Excel Files |*.xls;*.xlsx";
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    textBox2.Text = openFileDialog1.FileName;
+                    changeColorTextboxExcel(textBox2);
+                    getExcelSheets(textBox2.Text);
+                }
             }
             else
             {
-                openFileDialog1.InitialDirectory = mainPath;
+                MessageBox.Show("Önce İl-İlçe Kod Excelini Seçiniz");
             }
-            openFileDialog1.Filter = "Excel Files |*.xls;*.xlsx";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                textBox2.Text = openFileDialog1.FileName;
-                changeColorTextboxExcel(textBox2);
-                getExcelSheets(textBox2.Text);
-            }
+           
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)

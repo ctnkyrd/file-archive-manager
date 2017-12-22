@@ -125,6 +125,8 @@
             // 
             // listBox1
             // 
+            this.listBox1.Cursor = System.Windows.Forms.Cursors.No;
+            this.listBox1.Enabled = false;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 17;
             this.listBox1.Location = new System.Drawing.Point(9, 172);
@@ -240,11 +242,12 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.label4.Font = new System.Drawing.Font("Century Gothic", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label4.Location = new System.Drawing.Point(202, 105);
+            this.label4.Location = new System.Drawing.Point(223, 114);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(204, 23);
             this.label4.TabIndex = 1;
             this.label4.Text = "İl İlçe Excelini Seçiniz";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form1
             // 
