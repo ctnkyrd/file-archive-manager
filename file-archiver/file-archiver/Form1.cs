@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO;
 using Microsoft.Office.Interop.Excel;
 using System.Threading;
+using System.Reflection;
 
 namespace file_archiver
 {
@@ -20,6 +21,10 @@ namespace file_archiver
         public static string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
 #pragma warning restore CS0618 // Type or member is obsolete
         string[] kurulNames = Directory.GetDirectories(mainPath);
+
+        System.Data.DataTable tiffFilesDT = new System.Data.DataTable("tiffFilesDT");
+        System.Data.DataTable pdfFilesDT = new System.Data.DataTable("pdfFilesDT");
+
 
         public Form1()
         {
@@ -95,7 +100,9 @@ namespace file_archiver
                     ilIlce.Rows.Add(row);
 
                 }
-                application.Workbooks.Close();
+                //application.Workbooks.Close();
+                workbook.Close(false, Missing.Value, Missing.Value);
+                application.Quit();
 
                 dataGridView1.DataSource = ilIlce;
                 label4.Visible = false;
@@ -164,62 +171,96 @@ namespace file_archiver
 
         void getExcelSheets(string excelFile)
         {
-            listBox1.Items.Clear();
-            var application = new Microsoft.Office.Interop.Excel.Application();
-            var workbook = application.Workbooks.Open(excelFile);
-            var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
-            var worksheet_2 = workbook.Worksheets[2] as Microsoft.Office.Interop.Excel.Worksheet;
+            try
+            {
+                logging(excelFile + "-Veri DataTable Aktarım Başladı");
+                Thread t = new Thread(new ThreadStart(StartForm));
 
-            var sheetName_1 = worksheet_1.Name.ToString();
-            var sheetName_2 = worksheet_2.Name.ToString();
+                label5.Text = "Yükleniyor...";
+                label5.Visible = true;
+                label6.Text = "Yükleniyor...";
+                label6.Visible = true;
 
-            listBox1.Items.Add(sheetName_1);
-            listBox1.Items.Add(sheetName_2);
+                listBox1.Items.Clear();
+                var application = new Microsoft.Office.Interop.Excel.Application();
+                var workbook = application.Workbooks.Open(excelFile);
+                var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var worksheet_2 = workbook.Worksheets[2] as Microsoft.Office.Interop.Excel.Worksheet;
 
-            int rowCountTiff = worksheet_1.UsedRange.Rows.Count;
-            int rowCountPdf = worksheet_2.UsedRange.Rows.Count;
-            int columnCountTiff = worksheet_1.UsedRange.Columns.Count;
-            int columnCountPdf = worksheet_2.UsedRange.Columns.Count;
+                var sheetName_1 = worksheet_1.Name.ToString();
+                var sheetName_2 = worksheet_2.Name.ToString();
 
+                listBox1.Items.Add(sheetName_1);
+                listBox1.Items.Add(sheetName_2);
 
-            //if (columnCountTiff == 5)
-            //{
-            //    System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
+                int rowCountTiff = worksheet_1.UsedRange.Rows.Count;
+                int rowCountPdf = worksheet_2.UsedRange.Rows.Count;
+                int columnCountTiff = worksheet_1.UsedRange.Columns.Count;
+                int columnCountPdf = worksheet_2.UsedRange.Columns.Count;
 
-            //    ilIlce.Columns.Add("ilce_id");
-            //    ilIlce.Columns.Add("ilce_adi");
-            //    ilIlce.Columns.Add("il_id");
-            //    ilIlce.Columns.Add("il_adi");
-            //    ilIlce.Columns.Add("dosya_desimal_kodu");
+                t.Start();
 
-            //    DataRow row;
+                tiffFilesDT.Columns.Add("ID_kayıt_no");
+                tiffFilesDT.Columns.Add("desimal_no");
+                tiffFilesDT.Columns.Add("proje_açıklaması");
+                tiffFilesDT.Columns.Add("onay_no");
+                tiffFilesDT.Columns.Add("onay_tarihi");
 
-            //    int index = 0;
-            //    object rowIndex = 2;
-            //    while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
-            //    {
-            //        rowIndex = 2 + index;
-            //        row = ilIlce.NewRow();
+                pdfFilesDT.Columns.Add("id_kayit_no");
+                pdfFilesDT.Columns.Add("barkod_no");
+                pdfFilesDT.Columns.Add("desimal_no");
 
-            //        row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
-            //        row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
-            //        row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
-            //        row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
-            //        row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
-            //        index++;
-            //        ilIlce.Rows.Add(row);
+                DataRow row;
 
-            //    }
-            //    application.Workbooks.Close();
+                int index = 0;
+                object rowIndex = 2;
+                while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
+                {
+                    rowIndex = 2 + index;
+                    row = tiffFilesDT.NewRow();
 
-            //    dataGridView1.DataSource = ilIlce;
-            //    label4.Visible = false;
-            //}
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+                    row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+                    index++;
+                    tiffFilesDT.Rows.Add(row);
+                }
+                logging(excelFile + "-tiff Dosyalar Listelenmesi Tamamlandı");
+                index = 0;
+                rowIndex = 2;
+                while (((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2 != null)
+                {
+                    rowIndex = 2 + index;
+                    row = pdfFilesDT.NewRow();
 
-            //else
-            //{
-            //    label4.Text = "Excel Dosyası Hatalı!";
-            //}
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    index++;
+                    pdfFilesDT.Rows.Add(row);
+                }
+                logging(excelFile + "-pdf Dosyalar Listelenmesi Tamamlandı");
+
+                workbook.Close(false, Missing.Value, Missing.Value);
+                application.Quit();
+
+                dataGridView2.DataSource = tiffFilesDT;
+                dataGridView3.DataSource = pdfFilesDT;
+                label5.Visible = false;
+                label6.Visible = false;
+                t.Abort();
+                logging(excelFile + "-Listelenme Tamamlandı");
+
+            }
+            catch (Exception ex)
+            {
+
+                logging(excelFile+"-"+ex.ToString());
+            }
+            
+
 
         }
 
