@@ -46,10 +46,22 @@ namespace file_archiver
             changeColorTextboxExcel(textBox2);
             changeColorTextboxExcel(textBox1);
             changeColorTextboxExcel(textBox3);
+            if (Directory.Exists(textBox3.Text))
+            {
+                textBox3.BackColor = Color.LightGreen;
+                textBox3.ForeColor = Color.DarkGreen;
+                dosyalarPath = textBox3.Text;
 
+            }
+            else
+            {
+                textBox3.BackColor = Color.LightPink;
+                textBox3.ForeColor = Color.DarkRed;
+            }
 
             groupBox1.Text = mainPath;
         }
+
         private void StartForm()
         {
             System.Windows.Forms.Application.Run(new frmSplash()); 
@@ -301,6 +313,19 @@ namespace file_archiver
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             changeColorComboKurul(comboBox1);
+            textBox3.Text = mainPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox1.SelectedItem.ToString() + "\\";
+            if (Directory.Exists(textBox3.Text))
+            {
+                textBox3.BackColor = Color.LightGreen;
+                textBox3.ForeColor = Color.DarkGreen;
+                dosyalarPath = textBox3.Text;
+
+            }
+            else
+            {
+                textBox3.BackColor = Color.LightPink;
+                textBox3.ForeColor = Color.DarkRed;
+            }
             logging(comboBox1.SelectedItem.ToString() + " Kurulu Seçildi!");
 
         }
