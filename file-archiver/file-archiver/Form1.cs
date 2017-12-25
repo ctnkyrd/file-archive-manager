@@ -24,7 +24,7 @@ namespace file_archiver
 
         System.Data.DataTable tiffFilesDT = new System.Data.DataTable("tiffFilesDT");
         System.Data.DataTable pdfFilesDT = new System.Data.DataTable("pdfFilesDT");
-
+        System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
 
         public Form1()
         {
@@ -75,7 +75,7 @@ namespace file_archiver
             if (columnCount == 5)
             {
                 t.Start();
-                System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
+                
 
                 ilIlce.Columns.Add("ilce_id");
                 ilIlce.Columns.Add("ilce_adi");
@@ -239,9 +239,9 @@ namespace file_archiver
                     rowIndex = 2 + index;
                     row = pdfFilesDT.NewRow();
 
-                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
-                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
-                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 3]).Value2);
                     index++;
                     pdfFilesDT.Rows.Add(row);
                 }
@@ -264,8 +264,6 @@ namespace file_archiver
                 logging(excelFile+"-"+ex.ToString());
             }
             
-
-
         }
 
 
