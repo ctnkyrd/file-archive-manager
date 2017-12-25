@@ -21,7 +21,8 @@ namespace file_archiver
         public static string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
 #pragma warning restore CS0618 // Type or member is obsolete
         string[] kurulNames = Directory.GetDirectories(mainPath);
-
+        public static string dosyalarPath;
+        //The DataTables
         System.Data.DataTable tiffFilesDT = new System.Data.DataTable("tiffFilesDT");
         System.Data.DataTable pdfFilesDT = new System.Data.DataTable("pdfFilesDT");
         System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
@@ -44,6 +45,7 @@ namespace file_archiver
             changeColorComboKurul(comboBox1);
             changeColorTextboxExcel(textBox2);
             changeColorTextboxExcel(textBox1);
+            changeColorTextboxExcel(textBox3);
 
 
             groupBox1.Text = mainPath;
@@ -335,7 +337,6 @@ namespace file_archiver
             backgroundWorker1.RunWorkerAsync();
         }
 
-
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             progressBar1.Value = 0;
@@ -417,6 +418,44 @@ namespace file_archiver
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             buttonQDT.Enabled = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string path = mainPath + comboBox1.SelectedItem.ToString() + "\\";
+            FolderBrowserDialog folderBrowserdialog1 = new FolderBrowserDialog();
+            if (Directory.Exists(path))
+            {
+                folderBrowserdialog1.SelectedPath = path;
+            }
+            else
+            {
+                folderBrowserdialog1.SelectedPath = mainPath;
+            }
+            if (folderBrowserdialog1.ShowDialog() == DialogResult.OK)
+            {
+                textBox3.Text = folderBrowserdialog1.SelectedPath;
+                if (Directory.Exists(textBox3.Text))
+                {
+                    textBox3.BackColor = Color.LightGreen;
+                    textBox3.ForeColor = Color.DarkGreen;
+                }
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (Directory.Exists(textBox3.Text))
+            {
+                textBox3.BackColor = Color.LightGreen;
+                textBox3.ForeColor = Color.DarkGreen;
+                dosyalarPath = textBox3.Text;
+            }
+            else
+            {
+                textBox3.BackColor = Color.LightPink;
+                textBox3.ForeColor = Color.DarkRed;
+            }
         }
     }
 }
