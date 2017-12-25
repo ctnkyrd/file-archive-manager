@@ -342,19 +342,65 @@ namespace file_archiver
             int rowNumber = 1;
             foreach (DataRow row in tiffFilesDT.Rows)
             {
+                int? idKayit, onayNo, ilId, ilceId;
+                string desimalNo, projeAciklamasi, desimalSelection;
+                DateTime? onayTarihi;
+
                 //Read From Dosyalar Excel
-                int idKayit = Convert.ToInt32(row[0]);
-                string desimalNo = row[1].ToString();
-                string projeAciklamasi = row[2].ToString();
-                int onayNo = Convert.ToInt32(row[3]);
-                DateTime onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
+                if (row[0] != DBNull.Value)
+                {
+                    idKayit = Convert.ToInt32(row[0]);
+                }
+                else
+                {
+                    idKayit = null;
+                }
+                if (row[1] != DBNull.Value)
+                {
+                    desimalNo = row[1].ToString();
+                }
+                else
+                {
+                    desimalNo = null;
+                }
+                if (row[2] != DBNull.Value)
+                {
+                    projeAciklamasi = row[2].ToString();
+                }
+                else
+                {
+                    projeAciklamasi = null;
+                }
+                if (row[3] != DBNull.Value)
+                {
+                    onayNo = Convert.ToInt32(row[3]);
+                }
+                else
+                {
+                    onayNo = null;
+                }
+                if (row[4] != DBNull.Value)
+                {
+                    onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
+                }
+                else
+                {
+                    onayTarihi = null;
+                }
 
                 //desimal selector arrangement
-                string desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+                if (desimalNo != null)
+                {
+                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+                    //Select relational values from ililcekod excel
+                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
+                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
+                }
+                else
+                {
+                    desimalSelection = null;
+                }
 
-                //Select relational values from ililcekod excel
-                int ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '"+ desimalSelection + "'")[0]["il_id"]);
-                int ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
 
                 //progressbar precentage increment
                 rowNumber++;
