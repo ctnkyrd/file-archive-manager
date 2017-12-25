@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.Office.Interop.Excel;
 using System.Threading;
 using System.Reflection;
+using System.Data.SqlClient;
 
 namespace file_archiver
 {
@@ -19,6 +20,7 @@ namespace file_archiver
     {
 #pragma warning disable CS0618 // Type or member is obsolete
         public static string mainPath = ConfigurationSettings.AppSettings.Get("folderPath");
+        public static string dosya_arsiv_path = ConfigurationSettings.AppSettings.Get("dosya_arsiv_path");
 #pragma warning restore CS0618 // Type or member is obsolete
         string[] kurulNames = Directory.GetDirectories(mainPath);
         public static string dosyalarPath;
@@ -153,6 +155,44 @@ namespace file_archiver
             }
         }
 
+        private void dbTextbox_TextChanged(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TextBox txt = (System.Windows.Forms.TextBox) sender;
+            getAllDatabeses(tbHost.Text, tbUser.Text, tbPass.Text);
+        }
+
+        void getAllDatabeses(string serverName, string user, string passwd)
+        {
+            string conString = "server=" + serverName + ";uid=" + user + ";pwd=" + passwd;
+            try
+            {
+                using (SqlConnection con = new  SqlConnection(conString))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT name from sys.databases", con))
+                    {
+                        label14.Text = "Connected!";
+                        label14.ForeColor = Color.LightGreen;
+                        using (IDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                string dbName = dr[0].ToString();
+                                if (!comboBox2.Items.Contains(dbName))
+                                {
+                                    comboBox2.Items.Add(dbName);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logging(ex.ToString());
+            }
+        }
+
         public void changeColorComboKurul(ComboBox cb)
         {
             if (cb.SelectedItem.ToString().Length>0)
@@ -276,7 +316,6 @@ namespace file_archiver
             
         }
 
-
         private string dosyaArsiv_path (string dosyaKodu, string extension)
         {
             try
@@ -394,7 +433,7 @@ namespace file_archiver
             {
                 
                 int? idKayit, onayNo, ilId, ilceId;
-                string desimalNo, projeAciklamasi, desimalSelection;
+                string desimalNo, projeAciklamasi, desimalSelection, tifPath;
                 DateTime? onayTarihi;
 
                 //Read From Dosyalar Excel
@@ -453,6 +492,7 @@ namespace file_archiver
                 }
 
                 //Search for tiff file
+                tifPath = dosyaArsiv_path(idKayit.ToString(), ".tif");
                 Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), ".tif"));
 
                 //progressbar precentage increment
@@ -508,6 +548,11 @@ namespace file_archiver
                 textBox3.BackColor = Color.LightPink;
                 textBox3.ForeColor = Color.DarkRed;
             }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            buttonDbConnect.Enabled = true;
         }
     }
 }
