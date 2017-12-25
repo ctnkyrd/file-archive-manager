@@ -329,5 +329,34 @@ namespace file_archiver
             ililceGrid();
         }
 
+        private void buttonQDT_Click(object sender, EventArgs e)
+        {
+            buttonQDT.Enabled = false;
+            backgroundWorker1.RunWorkerAsync();
+        }
+
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            progressBar1.Value = 0;
+            int rowNumber = 1;
+            foreach (var row in tiffFilesDT.Rows)
+            {
+                Console.WriteLine(row);
+                rowNumber++;
+                int percentage = (rowNumber * 100) / tiffFilesDT.Rows.Count;
+                backgroundWorker1.ReportProgress(percentage);
+            }
+        }
+
+        void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            buttonQDT.Enabled = true;
+        }
     }
 }
