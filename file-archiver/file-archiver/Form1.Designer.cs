@@ -474,7 +474,7 @@
             this.tbUser.Name = "tbUser";
             this.tbUser.Size = new System.Drawing.Size(166, 22);
             this.tbUser.TabIndex = 15;
-            this.tbUser.Text = "sa";
+            this.tbUser.Text = "arda";
             this.tbUser.TextChanged += new System.EventHandler(this.dbTextbox_TextChanged);
             // 
             // label9

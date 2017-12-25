@@ -33,7 +33,7 @@ namespace file_archiver
         {
             InitializeComponent();
 
-            
+
             fillComboKurul();
 
             if (comboBox1.Items.Count > 0)
@@ -66,8 +66,9 @@ namespace file_archiver
 
         private void StartForm()
         {
-            System.Windows.Forms.Application.Run(new frmSplash()); 
+            System.Windows.Forms.Application.Run(new frmSplash());
         }
+
         public void ililceGrid()
         {
             Thread t = new Thread(new ThreadStart(StartForm));
@@ -88,7 +89,7 @@ namespace file_archiver
             if (columnCount == 5)
             {
                 t.Start();
-                
+
 
                 ilIlce.Columns.Add("ilce_id");
                 ilIlce.Columns.Add("ilce_adi");
@@ -136,7 +137,7 @@ namespace file_archiver
 
         public void logging(string logText)
         {
-            if (richTextBox1.Text.Length==0)
+            if (richTextBox1.Text.Length == 0)
             {
                 richTextBox1.Text = DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
             }
@@ -144,20 +145,20 @@ namespace file_archiver
             {
                 richTextBox1.Text = richTextBox1.Text + Environment.NewLine + DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
             }
-            
+
         }
 
         void fillComboKurul()
         {
             foreach (var item in kurulNames)
             {
-                comboBox1.Items.Add(item.ToString().Split('\\')[item.ToString().Split('\\').Length-1]);
+                comboBox1.Items.Add(item.ToString().Split('\\')[item.ToString().Split('\\').Length - 1]);
             }
         }
 
         private void dbTextbox_TextChanged(object sender, EventArgs e)
         {
-            System.Windows.Forms.TextBox txt = (System.Windows.Forms.TextBox) sender;
+            System.Windows.Forms.TextBox txt = (System.Windows.Forms.TextBox)sender;
             getAllDatabeses(tbHost.Text, tbUser.Text, tbPass.Text);
         }
 
@@ -167,7 +168,7 @@ namespace file_archiver
             string conString = "server=" + serverName + ";uid=" + user + ";pwd=" + passwd;
             try
             {
-                using (SqlConnection con = new  SqlConnection(conString))
+                using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
                     using (SqlCommand cmd = new SqlCommand("SELECT name from sys.databases", con))
@@ -193,6 +194,29 @@ namespace file_archiver
                 label14.Text = "Disconnected!";
                 label14.ForeColor = Color.Red;
                 //logging(ex.ToString());
+            }
+        }
+
+        private bool isExists(string dosyaDesimal, int dosyaKodu)
+        {
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+            if (true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
