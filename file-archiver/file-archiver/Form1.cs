@@ -340,9 +340,23 @@ namespace file_archiver
         {
             progressBar1.Value = 0;
             int rowNumber = 1;
-            foreach (var row in tiffFilesDT.Rows)
+            foreach (DataRow row in tiffFilesDT.Rows)
             {
-                Console.WriteLine(row);
+                //Read From Dosyalar Excel
+                int idKayit = Convert.ToInt32(row[0]);
+                string desimalNo = row[1].ToString();
+                string projeAciklamasi = row[2].ToString();
+                int onayNo = Convert.ToInt32(row[3]);
+                DateTime onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
+
+                //desimal selector arrangement
+                string desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+
+                //Select relational values from ililcekod excel
+                int ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '"+ desimalSelection + "'")[0]["il_id"]);
+                int ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
+
+                //progressbar precentage increment
                 rowNumber++;
                 int percentage = (rowNumber * 100) / tiffFilesDT.Rows.Count;
                 backgroundWorker1.ReportProgress(percentage);
@@ -356,6 +370,7 @@ namespace file_archiver
 
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1]
             buttonQDT.Enabled = true;
         }
     }
