@@ -48,13 +48,10 @@ namespace file_archiver
 
             groupBox1.Text = mainPath;
         }
-
         private void StartForm()
         {
             System.Windows.Forms.Application.Run(new frmSplash()); 
         }
-
-         
         public void ililceGrid()
         {
             Thread t = new Thread(new ThreadStart(StartForm));
@@ -133,7 +130,6 @@ namespace file_archiver
             }
             
         }
-
 
         void fillComboKurul()
         {
@@ -265,7 +261,6 @@ namespace file_archiver
             }
             
         }
-
 
         private void button2_Click(object sender, EventArgs e)
         {
