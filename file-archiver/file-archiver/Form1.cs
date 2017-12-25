@@ -163,6 +163,7 @@ namespace file_archiver
 
         void getAllDatabeses(string serverName, string user, string passwd)
         {
+            comboBox2.Items.Clear();
             string conString = "server=" + serverName + ";uid=" + user + ";pwd=" + passwd;
             try
             {
@@ -187,9 +188,11 @@ namespace file_archiver
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                logging(ex.ToString());
+                label14.Text = "Disconnected!";
+                label14.ForeColor = Color.Red;
+                //logging(ex.ToString());
             }
         }
 
