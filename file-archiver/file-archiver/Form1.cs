@@ -276,6 +276,30 @@ namespace file_archiver
             
         }
 
+
+        private string dosyaArsiv_path (string dosyaKodu, string extension)
+        {
+            try
+            {
+                string fullFileName = dosyaKodu + extension;
+                string[] allFiles = Directory.GetFiles(dosyalarPath, fullFileName, SearchOption.AllDirectories);
+                if (allFiles.Length>0)
+                {
+                    return allFiles[0];
+                }
+                else
+                {
+                    return fullFileName + "Dosya Bulunamadı!";
+                }
+            }
+            catch (Exception ex)
+            {
+                logging(ex.ToString());
+                return "Error! Check Logging!";
+            }
+            
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (textBox1.BackColor == Color.LightGreen)
@@ -358,16 +382,17 @@ namespace file_archiver
 
         private void buttonQDT_Click(object sender, EventArgs e)
         {
+            progressBar1.Value = 0;
             buttonQDT.Enabled = false;
             backgroundWorker1.RunWorkerAsync();
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            progressBar1.Value = 0;
             int rowNumber = 1;
             foreach (DataRow row in tiffFilesDT.Rows)
             {
+                
                 int? idKayit, onayNo, ilId, ilceId;
                 string desimalNo, projeAciklamasi, desimalSelection;
                 DateTime? onayTarihi;
@@ -427,6 +452,8 @@ namespace file_archiver
                     desimalSelection = null;
                 }
 
+                //Search for tiff file
+                Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), ".tif"));
 
                 //progressbar precentage increment
                 rowNumber++;
