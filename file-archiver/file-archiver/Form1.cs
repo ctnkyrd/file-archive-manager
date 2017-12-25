@@ -370,7 +370,6 @@ namespace file_archiver
 
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1]
             buttonQDT.Enabled = true;
         }
     }
