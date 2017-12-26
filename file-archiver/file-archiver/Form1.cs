@@ -29,6 +29,10 @@ namespace file_archiver
         System.Data.DataTable pdfFilesDT = new System.Data.DataTable("pdfFilesDT");
         System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
 
+        //db parameters
+
+        public static string dbHost, dbUser, dbPass, dbName;
+
         public Form1()
         {
             InitializeComponent();
@@ -158,8 +162,11 @@ namespace file_archiver
 
         private void dbTextbox_TextChanged(object sender, EventArgs e)
         {
+            dbHost = tbHost.Text;
+            dbUser = tbUser.Text;
+            dbPass = tbPass.Text;
             System.Windows.Forms.TextBox txt = (System.Windows.Forms.TextBox)sender;
-            getAllDatabeses(tbHost.Text, tbUser.Text, tbPass.Text);
+            getAllDatabeses(dbHost,dbUser,dbPass);
         }
 
         void getAllDatabeses(string serverName, string user, string passwd)
@@ -197,26 +204,35 @@ namespace file_archiver
             }
         }
 
-        private bool isExists(string dosyaDesimal, int dosyaKodu)
+        private bool isExists(string dosyaDesimal, string dosyaKodu)
         {
             try
             {
+                string conString = "server=" + dbHost + ";uid=" + dbUser+ ";pwd=" + dbPass+ ";database="+dbName;
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+"' AND KAYIT_NO = "+dosyaKodu, con))
+                    {                       
+                        using (IDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
                 throw;
-            }
-
-
-            if (true)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
@@ -295,30 +311,30 @@ namespace file_archiver
 
                 int index = 0;
                 object rowIndex = 2;
-                while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
+                while (((Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
                 {
                     rowIndex = 2 + index;
                     row = tiffFilesDT.NewRow();
 
-                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
-                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
-                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
-                    row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
-                    row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+                    row[0] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    row[3] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+                    row[4] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 5]).Value2);
                     index++;
                     tiffFilesDT.Rows.Add(row);
                 }
                 logging(excelFile + "-tiff Dosyalar Listelenmesi Tamamlandı");
                 index = 0;
                 rowIndex = 2;
-                while (((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2 != null)
+                while (((Range)worksheet_2.Cells[rowIndex, 1]).Value2 != null)
                 {
                     rowIndex = 2 + index;
                     row = pdfFilesDT.NewRow();
 
-                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2);
-                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 2]).Value2);
-                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 3]).Value2);
+                    row[0] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 3]).Value2);
                     index++;
                     pdfFilesDT.Rows.Add(row);
                 }
@@ -386,6 +402,7 @@ namespace file_archiver
                     textBox2.Text = openFileDialog1.FileName;
                     changeColorTextboxExcel(textBox2);
                     getExcelSheets(textBox2.Text);
+                    //getExcelTif(textBox2.Text);
                 }
             }
             else
@@ -527,9 +544,17 @@ namespace file_archiver
                     desimalSelection = null;
                 }
 
-                //Search for tiff file
-                tifPath = dosyaArsiv_path(idKayit.ToString(), ".tif");
-                Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), ".tif"));
+                //check db if record is there?
+                if (isExists(desimalNo,idKayit.ToString()))
+                {
+                    Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
+                }
+                else
+                {
+                    //Search for tiff file
+                    tifPath = dosyaArsiv_path(idKayit.ToString(), ".tif");
+                    Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), ".tif"));
+                }
 
                 //progressbar precentage increment
                 rowNumber++;
@@ -588,6 +613,7 @@ namespace file_archiver
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dbName = comboBox2.SelectedItem.ToString();
             buttonDbConnect.Enabled = true;
         }
     }
