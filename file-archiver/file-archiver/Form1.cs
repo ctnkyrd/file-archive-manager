@@ -448,9 +448,18 @@ namespace file_archiver
 
         private void buttonQDT_Click(object sender, EventArgs e)
         {
-            progressBar1.Value = 0;
-            buttonQDT.Enabled = false;
-            backgroundWorker1.RunWorkerAsync();
+
+            if (label14.Text == "Disconnected!")
+            {
+                MessageBox.Show("Lütfen Veritabanı Bilgilerini Giriniz!");
+                tabControl1.SelectedIndex = 4;
+            }
+            else if (label14.Text == "Connected!")
+            {
+                progressBar1.Value = 0;
+                buttonQDT.Enabled = false;
+                backgroundWorker1.RunWorkerAsync();
+            }
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
