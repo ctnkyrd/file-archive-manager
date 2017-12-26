@@ -385,7 +385,8 @@ namespace file_archiver
                 {
                     textBox2.Text = openFileDialog1.FileName;
                     changeColorTextboxExcel(textBox2);
-                    getExcelSheets(textBox2.Text);
+                    //getExcelSheets(textBox2.Text);
+                    backgroundWorker2.RunWorkerAsync();
                 }
             }
             else
@@ -580,6 +581,111 @@ namespace file_archiver
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             buttonDbConnect.Enabled = true;
+        }
+
+        //2nd bg worker
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string excelFile = textBox2.Text;
+            try
+            {
+                logging(excelFile + "-Veri DataTable Aktarım Başladı");
+
+                label5.Text = "Yükleniyor...";
+                label5.Visible = true;
+                label6.Text = "Yükleniyor...";
+                label6.Visible = true;
+
+                //listBox1.Items.Clear();
+                var application = new Microsoft.Office.Interop.Excel.Application();
+                var workbook = application.Workbooks.Open(excelFile);
+                var worksheet_1 = workbook.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var worksheet_2 = workbook.Worksheets[2] as Microsoft.Office.Interop.Excel.Worksheet;
+
+                var sheetName_1 = worksheet_1.Name.ToString();
+                var sheetName_2 = worksheet_2.Name.ToString();
+
+                //listBox1.Items.Add(sheetName_1);
+                //listBox1.Items.Add(sheetName_2);
+
+                int rowCountTiff = worksheet_1.UsedRange.Rows.Count;
+                int rowCountPdf = worksheet_2.UsedRange.Rows.Count;
+                int totalRowCount = rowCountPdf + rowCountTiff;
+                int currentRow = 1;
+
+
+                tiffFilesDT.Columns.Add("ID_kayıt_no");
+                tiffFilesDT.Columns.Add("desimal_no");
+                tiffFilesDT.Columns.Add("proje_açıklaması");
+                tiffFilesDT.Columns.Add("onay_no");
+                tiffFilesDT.Columns.Add("onay_tarihi");
+
+                pdfFilesDT.Columns.Add("id_kayit_no");
+                pdfFilesDT.Columns.Add("barkod_no");
+                pdfFilesDT.Columns.Add("desimal_no");
+
+                DataRow row;
+
+                int index = 0;
+                object rowIndex = 2;
+                while (((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2 != null)
+                {
+                    rowIndex = 2 + index;
+                    row = tiffFilesDT.NewRow();
+
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                    row[3] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+                    row[4] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+                    index++;
+                    tiffFilesDT.Rows.Add(row);
+                    currentRow++;
+                    backgroundWorker2.ReportProgress(currentRow);
+                }
+                logging(excelFile + "-tiff Dosyalar Listelenmesi Tamamlandı");
+                index = 0;
+                rowIndex = 2;
+                while (((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2 != null)
+                {
+                    rowIndex = 2 + index;
+                    row = pdfFilesDT.NewRow();
+
+                    row[0] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 1]).Value2);
+                    row[1] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 2]).Value2);
+                    row[2] = Convert.ToString(((Microsoft.Office.Interop.Excel.Range)worksheet_2.Cells[rowIndex, 3]).Value2);
+                    index++;
+                    pdfFilesDT.Rows.Add(row);
+                    currentRow++;
+                    backgroundWorker2.ReportProgress(currentRow);
+                }
+                logging(excelFile + "-pdf Dosyalar Listelenmesi Tamamlandı");
+
+                workbook.Close(false, Missing.Value, Missing.Value);
+                application.Quit();
+
+
+                logging(excelFile + "-Listelenme Tamamlandı");
+                dataGridView2.DataSource = tiffFilesDT;
+                dataGridView3.DataSource = pdfFilesDT;
+                label5.Visible = false;
+                label6.Visible = false;
+
+            }
+            catch (Exception ex)
+            {
+
+                logging(excelFile + "-" + ex.ToString());
+            }
+        }
+        void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            lbExcelRowNu.Text = e.ProgressPercentage.ToString();
+        }
+        void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            lbExcelRowNu.Text = "Completed with "+lbExcelRowNu.Text;
+            //completed..
         }
     }
 }
