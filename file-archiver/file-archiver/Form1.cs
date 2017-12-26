@@ -28,7 +28,7 @@ namespace file_archiver
         System.Data.DataTable tiffFilesDT = new System.Data.DataTable("tiffFilesDT");
         System.Data.DataTable pdfFilesDT = new System.Data.DataTable("pdfFilesDT");
         System.Data.DataTable ilIlce = new System.Data.DataTable("ilIlce");
-
+        System.Data.DataTable dosyaArsiv = new System.Data.DataTable("dosyaArsiv");
         //db parameters
 
         public static string dbHost, dbUser, dbPass, dbName;
@@ -37,7 +37,7 @@ namespace file_archiver
         {
             InitializeComponent();
 
-
+            createDosyaArsivUnionTableColumns();
             fillComboKurul();
 
             if (comboBox1.Items.Count > 0)
@@ -66,6 +66,31 @@ namespace file_archiver
             }
 
             groupBox1.Text = mainPath;
+        }
+
+        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime onayTarihi, string turu, string barkod)
+        {
+            DataRow row = dosyaArsiv.NewRow();
+            row[0] = idKayit;
+            row[1] = desimalNo;
+            row[2] = Aciklama;
+            row[3] = onayNo;
+            row[4] = onayTarihi;
+            row[5] = turu;
+            row[6] = barkod;
+            dosyaArsiv.Rows.Add(row);
+        }
+        void createDosyaArsivUnionTableColumns()
+        {
+            dosyaArsiv.Columns.Add("id_kayit");
+            dosyaArsiv.Columns.Add("desimal_no");
+            dosyaArsiv.Columns.Add("aciklama");
+            dosyaArsiv.Columns.Add("onay_no");
+            dosyaArsiv.Columns.Add("onay_tarihi");
+            dosyaArsiv.Columns.Add("turu");
+            dosyaArsiv.Columns.Add("barkod_no");
+
+
         }
 
         private void StartForm()
@@ -343,10 +368,11 @@ namespace file_archiver
                 workbook.Close(false, Missing.Value, Missing.Value);
                 application.Quit();
 
-                dataGridView2.DataSource = tiffFilesDT;
-                dataGridView3.DataSource = pdfFilesDT;
+                //dataGridView2.DataSource = tiffFilesDT;
+                //dataGridView3.DataSource = pdfFilesDT;
                 label5.Visible = false;
                 label6.Visible = false;
+                FormCollection fc = System.Windows.Forms.Application.OpenForms;
                 t.Abort();
                 logging(excelFile + "-Listelenme Tamamlandı");
 
@@ -465,6 +491,7 @@ namespace file_archiver
 
         private void buttonQDT_Click(object sender, EventArgs e)
         {
+
 
             if (label14.Text == "Disconnected!")
             {
