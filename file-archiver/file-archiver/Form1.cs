@@ -500,7 +500,6 @@ namespace file_archiver
                     textBox2.Text = openFileDialog1.FileName;
                     changeColorTextboxExcel(textBox2);
                     getExcelSheets(textBox2.Text);
-                    //getExcelTif(textBox2.Text);
                 }
             }
             else
@@ -671,6 +670,22 @@ namespace file_archiver
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             buttonQDT.Enabled = true;
+        }
+
+        //second worker for excel progress watch
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Console.Write("BG worker 2 work completed!");
         }
 
         private void button3_Click(object sender, EventArgs e)
