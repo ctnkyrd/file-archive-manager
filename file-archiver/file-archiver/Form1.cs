@@ -68,7 +68,7 @@ namespace file_archiver
             groupBox1.Text = mainPath;
         }
 
-        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime onayTarihi, string turu, string barkod)
+        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime? onayTarihi, string turu, string barkod)
         {
             DataRow row = dosyaArsiv.NewRow();
             row[0] = idKayit;
@@ -89,8 +89,66 @@ namespace file_archiver
             dosyaArsiv.Columns.Add("onay_tarihi");
             dosyaArsiv.Columns.Add("turu");
             dosyaArsiv.Columns.Add("barkod_no");
+        }
 
+        private void mergeTables()
+        {
+            int idKayit;
+            string desimalNo, Aciklama, onayNo, turu, barkod;
+            DateTime? onayTarihi;
 
+            foreach (DataRow dr in tiffFilesDT.Rows)
+            {
+                idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
+                desimalNo = dr["desimal_no"].ToString();
+
+                if (dr["proje_açıklaması"] != DBNull.Value)
+                {
+                    Aciklama = dr["proje_açıklaması"].ToString();
+                }
+                else
+                {
+                    Aciklama = null;
+                }
+                if (dr["onay_no"] != DBNull.Value)
+                {
+                    onayNo = dr["onay_no"].ToString();
+                }
+                else
+                {
+                    onayNo = null;
+                }
+                turu = ".tif";
+                barkod = null;
+                if (dr["onay_tarihi"] != DBNull.Value)
+                {
+                    onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"]));
+                }
+                else
+                {
+                    onayTarihi = null;
+                }
+                fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+            }
+
+            foreach (DataRow dr in pdfFilesDT.Rows)
+            {
+                idKayit = Convert.ToInt32(dr["id_kayit_no"]);
+                desimalNo = dr["desimal_no"].ToString();
+                Aciklama = null;
+                onayNo = null;
+                turu = ".pdf";
+                if (dr["barkod_no"] != DBNull.Value)
+                {
+                    barkod = dr["barkod_no"].ToString();
+                }
+                else
+                {
+                    barkod = null;
+                }
+                onayTarihi = null;
+                fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+            }
         }
 
         private void StartForm()
@@ -341,13 +399,20 @@ namespace file_archiver
                     rowIndex = 2 + index;
                     row = tiffFilesDT.NewRow();
 
-                    row[0] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 1]).Value2);
-                    row[1] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 2]).Value2);
-                    row[2] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 3]).Value2);
-                    row[3] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 4]).Value2);
-                    row[4] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 5]).Value2);
-                    index++;
-                    tiffFilesDT.Rows.Add(row);
+                    if (Convert.ToInt32(((Range)worksheet_1.Cells[rowIndex, 1]).Value2)>0)
+                    {
+                        row[0] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 1]).Value2);
+                        row[1] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 2]).Value2);
+                        row[2] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 3]).Value2);
+                        row[3] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 4]).Value2);
+                        row[4] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 5]).Value2);
+                        index++;
+                        tiffFilesDT.Rows.Add(row);
+                    }
+                    else
+                    {
+                        Console.WriteLine("dosya_sonu");
+                    }
                 }
                 logging(excelFile + "-tiff Dosyalar Listelenmesi Tamamlandı");
                 index = 0;
@@ -356,12 +421,19 @@ namespace file_archiver
                 {
                     rowIndex = 2 + index;
                     row = pdfFilesDT.NewRow();
+                    if (Convert.ToInt32(((Range)worksheet_2.Cells[rowIndex, 1]).Value2>0)
+                    {
+                        row[0] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 1]).Value2);
+                        row[1] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 2]).Value2);
+                        row[2] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 3]).Value2);
+                        index++;
+                        pdfFilesDT.Rows.Add(row);
+                    }
+                    else
+                    {
+                        Console.WriteLine("dosya_sonu");
+                    }
 
-                    row[0] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 1]).Value2);
-                    row[1] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 2]).Value2);
-                    row[2] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 3]).Value2);
-                    index++;
-                    pdfFilesDT.Rows.Add(row);
                 }
                 logging(excelFile + "-pdf Dosyalar Listelenmesi Tamamlandı");
 
@@ -491,7 +563,8 @@ namespace file_archiver
 
         private void buttonQDT_Click(object sender, EventArgs e)
         {
-
+            //fillDosyaArsivUnionTableColumns(1, "10.2.0.2", "aciklama burda", "sdkfjl 444", DateTime.Now, ".pdf", "791720394şşç");
+            mergeTables();
 
             if (label14.Text == "Disconnected!")
             {
