@@ -675,6 +675,7 @@ namespace file_archiver
             catch (Exception ex)
             {
 
+
                 logging(excelFile + "-" + ex.ToString());
             }
         }
