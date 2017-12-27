@@ -68,7 +68,7 @@ namespace file_archiver
             groupBox1.Text = mainPath;
         }
 
-        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime? onayTarihi, string turu, string barkod, int ilId, int ilceID)
+        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, string onayTarihi, string turu, string barkod, int ilId, int ilceID)
         {
             DataRow row = dosyaArsiv.NewRow();
             row[0] = idKayit;
@@ -95,13 +95,14 @@ namespace file_archiver
             dosyaArsiv.Columns.Add("il_id");
             dosyaArsiv.Columns.Add("ilce_id");
             dosyaArsiv.Columns.Add("exists");
+            dosyaArsiv.Columns.Add("dosya_yolu");
+
         }
 
         private void mergeTables()
         {
             int idKayit, ilId, ilceId;
-            string desimalNo, Aciklama, onayNo, turu, barkod,desimalSelection;
-            DateTime? onayTarihi;
+            string desimalNo, Aciklama, onayNo, turu, barkod,desimalSelection,onayTarihi;
 
             foreach (DataRow dr in tiffFilesDT.Rows)
             {
@@ -134,7 +135,7 @@ namespace file_archiver
                     barkod = null;
                     if (dr["onay_tarihi"] != DBNull.Value)
                     {
-                        onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"]));
+                        onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"])).ToString("yyyy-MM-dd HH:mm:ss.fff");
                     }
                     else
                     {
@@ -604,12 +605,12 @@ namespace file_archiver
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            int rowNumber = 1;
+            int rowNumber = 0;
             foreach (DataRow row in dosyaArsiv.Rows)
             {
                 
                 int? idKayit, onayNo, ilId, ilceId;
-                string desimalNo, projeAciklamasi, desimalSelection, tifPath;
+                string desimalNo, filePath, turu,barkodNo;
                 DateTime? onayTarihi;
 
                 //Read From Dosyalar Excel
@@ -629,14 +630,6 @@ namespace file_archiver
                 {
                     desimalNo = null;
                 }
-                if (row[2] != DBNull.Value)
-                {
-                    projeAciklamasi = row[2].ToString();
-                }
-                else
-                {
-                    projeAciklamasi = null;
-                }
                 if (row[3] != DBNull.Value)
                 {
                     onayNo = Convert.ToInt32(row[3]);
@@ -648,8 +641,8 @@ namespace file_archiver
                 string onayTarihiSQL;
                 if (row[4] != DBNull.Value)
                 {
-                    onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
-                    onayTarihiSQL = DateTime.FromOADate(Convert.ToDouble(row[4])).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    //onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
+                    onayTarihiSQL = Convert.ToString(row[4]);
                 }
                 else
                 {
@@ -657,36 +650,31 @@ namespace file_archiver
                     onayTarihiSQL = onayTarihi.ToString();
                 }
 
-                //desimal selector arrangement
-                if (desimalNo != null)
-                {
-                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
-                    //Select relational values from ililcekod excel
-                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
-                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
-                }
-                else
-                {
-                    desimalSelection = null;
-                }
+                turu = Convert.ToString(row[5]);
+                barkodNo = Convert.ToString(row[6]);
+                ilId = Convert.ToInt32(row[7]);
+                ilceId = Convert.ToInt32(row[8]);
 
-                
 
                 //check db if record is there?
                 if (isExists(desimalNo,onayNo.ToString(), onayTarihiSQL))
                 {
                     Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
+                    row[9] = 1;
                 }
                 else
                 {
                     //Search for tiff file
-                    tifPath = dosyaArsiv_path(idKayit.ToString(), ".tif");
-                    Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), ".tif"));
+                    filePath = dosyaArsiv_path(idKayit.ToString(), turu);
+                    Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), turu));
+                    row[9] = 0;
+                    row[10] = filePath;
+
                 }
 
                 //progressbar precentage increment
                 rowNumber++;
-                int percentage = (rowNumber * 100) / tiffFilesDT.Rows.Count;
+                int percentage = (rowNumber * 100) / dosyaArsiv.Rows.Count;
                 backgroundWorker1.ReportProgress(percentage);
             }
         }
@@ -699,6 +687,8 @@ namespace file_archiver
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             buttonQDT.Enabled = true;
+            dataGridView4.DataSource = null;
+            dataGridView4.DataSource = dosyaArsiv;
         }
 
         //second worker for excel progress watch
