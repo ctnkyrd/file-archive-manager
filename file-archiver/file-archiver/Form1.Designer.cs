@@ -73,6 +73,8 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.label15 = new System.Windows.Forms.Label();
+            this.lbExcelRowNu = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -91,6 +93,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lbExcelRowNu);
+            this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.textBox3);
@@ -535,6 +539,23 @@
             this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
             this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(4, 314);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(120, 17);
+            this.label15.TabIndex = 6;
+            this.label15.Text = "Excel Row Number:";
+            // 
+            // lbExcelRowNu
+            // 
+            this.lbExcelRowNu.AutoSize = true;
+            this.lbExcelRowNu.Location = new System.Drawing.Point(125, 314);
+            this.lbExcelRowNu.Name = "lbExcelRowNu";
+            this.lbExcelRowNu.Size = new System.Drawing.Size(0, 17);
+            this.lbExcelRowNu.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -614,6 +635,8 @@
         private System.Windows.Forms.TextBox tbPass;
         private System.Windows.Forms.Button buttonDbConnect;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.Windows.Forms.Label lbExcelRowNu;
+        private System.Windows.Forms.Label label15;
     }
 }
 
