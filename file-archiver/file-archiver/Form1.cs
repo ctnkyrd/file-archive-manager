@@ -68,7 +68,7 @@ namespace file_archiver
             groupBox1.Text = mainPath;
         }
 
-        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime? onayTarihi, string turu, string barkod)
+        void fillDosyaArsivUnionTableColumns(int idKayit, string desimalNo, string Aciklama, string onayNo, DateTime? onayTarihi, string turu, string barkod, int ilId, int ilceID)
         {
             DataRow row = dosyaArsiv.NewRow();
             row[0] = idKayit;
@@ -78,8 +78,11 @@ namespace file_archiver
             row[4] = onayTarihi;
             row[5] = turu;
             row[6] = barkod;
+            row[7] = ilId;
+            row[8] = ilceID;
             dosyaArsiv.Rows.Add(row);
         }
+
         void createDosyaArsivUnionTableColumns()
         {
             dosyaArsiv.Columns.Add("id_kayit");
@@ -89,12 +92,14 @@ namespace file_archiver
             dosyaArsiv.Columns.Add("onay_tarihi");
             dosyaArsiv.Columns.Add("turu");
             dosyaArsiv.Columns.Add("barkod_no");
+            dosyaArsiv.Columns.Add("il_id");
+            dosyaArsiv.Columns.Add("ilce_id");
         }
 
         private void mergeTables()
         {
-            int idKayit;
-            string desimalNo, Aciklama, onayNo, turu, barkod;
+            int idKayit, ilId, ilceId;
+            string desimalNo, Aciklama, onayNo, turu, barkod,desimalSelection;
             DateTime? onayTarihi;
 
             foreach (DataRow dr in tiffFilesDT.Rows)
@@ -103,7 +108,11 @@ namespace file_archiver
                 {
                     idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
                     desimalNo = dr["desimal_no"].ToString();
+                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
 
+                    //Select relational values from ililcekod excel
+                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
+                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
                     if (dr["proje_açıklaması"] != DBNull.Value)
                     {
                         Aciklama = dr["proje_açıklaması"].ToString();
@@ -130,19 +139,23 @@ namespace file_archiver
                     {
                         onayTarihi = null;
                     }
-                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod, ilId,ilceId);
                 }
                 dataGridView4.DataSource = dosyaArsiv;
                 tabControl1.SelectedIndex = 5;
                 
             }
-
             foreach (DataRow dr in pdfFilesDT.Rows)
             {
                 if (dr["id_kayit_no"] != DBNull.Value)
                 {
                     idKayit = Convert.ToInt32(dr["id_kayit_no"]);
                     desimalNo = dr["desimal_no"].ToString();
+                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+
+                    //Select relational values from ililcekod excel
+                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
+                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
                     Aciklama = null;
                     onayNo = null;
                     turu = ".pdf";
@@ -155,7 +168,7 @@ namespace file_archiver
                         barkod = null;
                     }
                     onayTarihi = null;
-                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod,ilId,ilceId);
                 }
                 
             }
@@ -297,7 +310,7 @@ namespace file_archiver
             }
         }
 
-        private bool isExists(string dosyaDesimal, string dosyaKodu)
+        private bool isExists(string dosyaDesimal, string onayNo, string onayTarihi)
         {
             try
             {
@@ -305,7 +318,7 @@ namespace file_archiver
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+"' AND KAYIT_NO = "+dosyaKodu, con))
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+ "' AND PROJE_ONAY_SAYISI = '" + onayNo + "' AND PROJE_ONAY_TARIHI ='"+ onayTarihi+"'", con))
                     {                       
                         using (IDataReader dr = cmd.ExecuteReader())
                         {
@@ -366,10 +379,6 @@ namespace file_archiver
                 logging(excelFile + "-Veri DataTable Aktarım Başladı");
                 Thread t = new Thread(new ThreadStart(StartForm));
 
-                label5.Text = "Yükleniyor...";
-                label5.Visible = true;
-                label6.Text = "Yükleniyor...";
-                label6.Visible = true;
 
                 listBox1.Items.Clear();
                 var application = new Microsoft.Office.Interop.Excel.Application();
@@ -449,11 +458,6 @@ namespace file_archiver
 
                 workbook.Close(false, Missing.Value, Missing.Value);
                 application.Quit();
-
-                //dataGridView2.DataSource = tiffFilesDT;
-                //dataGridView3.DataSource = pdfFilesDT;
-                label5.Visible = false;
-                label6.Visible = false;
                 FormCollection fc = System.Windows.Forms.Application.OpenForms;
                 t.Abort();
                 logging(excelFile + "-Listelenme Tamamlandı");
@@ -573,7 +577,6 @@ namespace file_archiver
 
         private void buttonQDT_Click(object sender, EventArgs e)
         {
-            //fillDosyaArsivUnionTableColumns(1, "10.2.0.2", "aciklama burda", "sdkfjl 444", DateTime.Now, ".pdf", "791720394şşç");
             mergeTables();
 
             if (label14.Text == "Disconnected!")
@@ -632,13 +635,16 @@ namespace file_archiver
                 {
                     onayNo = null;
                 }
+                string onayTarihiSQL;
                 if (row[4] != DBNull.Value)
                 {
                     onayTarihi = DateTime.FromOADate(Convert.ToDouble(row[4]));
+                    onayTarihiSQL = DateTime.FromOADate(Convert.ToDouble(row[4])).ToString("yyyy-MM-dd HH:mm:ss.fff");
                 }
                 else
                 {
                     onayTarihi = null;
+                    onayTarihiSQL = onayTarihi.ToString();
                 }
 
                 //desimal selector arrangement
@@ -654,8 +660,10 @@ namespace file_archiver
                     desimalSelection = null;
                 }
 
+                
+
                 //check db if record is there?
-                if (isExists(desimalNo,idKayit.ToString()))
+                if (isExists(desimalNo,onayNo.ToString(), onayTarihiSQL))
                 {
                     Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
                 }
@@ -737,11 +745,6 @@ namespace file_archiver
             {
                 logging(excelFile + "-Veri DataTable Aktarım Başladı");
 
-                label5.Text = "Yükleniyor...";
-                label5.Visible = true;
-                label6.Text = "Yükleniyor...";
-                label6.Visible = true;
-
                 //listBox1.Items.Clear();
                 var application = new Microsoft.Office.Interop.Excel.Application();
                 var workbook = application.Workbooks.Open(excelFile);
@@ -812,11 +815,6 @@ namespace file_archiver
 
 
                 logging(excelFile + "-Listelenme Tamamlandı");
-                dataGridView2.DataSource = tiffFilesDT;
-                dataGridView3.DataSource = pdfFilesDT;
-                label5.Visible = false;
-                label6.Visible = false;
-
             }
             catch (Exception ex)
             {
