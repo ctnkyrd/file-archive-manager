@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbExcelRowNu = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -73,8 +75,8 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.label15 = new System.Windows.Forms.Label();
-            this.lbExcelRowNu = new System.Windows.Forms.Label();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.dataGridView4 = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -85,6 +87,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -115,6 +119,23 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Giriş";
+            // 
+            // lbExcelRowNu
+            // 
+            this.lbExcelRowNu.AutoSize = true;
+            this.lbExcelRowNu.Location = new System.Drawing.Point(125, 314);
+            this.lbExcelRowNu.Name = "lbExcelRowNu";
+            this.lbExcelRowNu.Size = new System.Drawing.Size(0, 17);
+            this.lbExcelRowNu.TabIndex = 13;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(4, 314);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(120, 17);
+            this.label15.TabIndex = 6;
+            this.label15.Text = "Excel Row Number:";
             // 
             // button3
             // 
@@ -243,6 +264,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.tabControl1.Location = new System.Drawing.Point(420, 0);
             this.tabControl1.Name = "tabControl1";
@@ -539,22 +561,26 @@
             this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
             this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
             // 
-            // label15
+            // tabPage6
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(4, 314);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(120, 17);
-            this.label15.TabIndex = 6;
-            this.label15.Text = "Excel Row Number:";
+            this.tabPage6.Controls.Add(this.dataGridView4);
+            this.tabPage6.Location = new System.Drawing.Point(4, 26);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(608, 339);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Aktarım Dosyalar";
+            this.tabPage6.UseVisualStyleBackColor = true;
             // 
-            // lbExcelRowNu
+            // dataGridView4
             // 
-            this.lbExcelRowNu.AutoSize = true;
-            this.lbExcelRowNu.Location = new System.Drawing.Point(125, 314);
-            this.lbExcelRowNu.Name = "lbExcelRowNu";
-            this.lbExcelRowNu.Size = new System.Drawing.Size(0, 17);
-            this.lbExcelRowNu.TabIndex = 13;
+            this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView4.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView4.Name = "dataGridView4";
+            this.dataGridView4.ReadOnly = true;
+            this.dataGridView4.Size = new System.Drawing.Size(602, 333);
+            this.dataGridView4.TabIndex = 0;
             // 
             // Form1
             // 
@@ -586,6 +612,8 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -637,6 +665,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.Windows.Forms.Label lbExcelRowNu;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.DataGridView dataGridView4;
     }
 }
 

@@ -99,55 +99,65 @@ namespace file_archiver
 
             foreach (DataRow dr in tiffFilesDT.Rows)
             {
-                idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
-                desimalNo = dr["desimal_no"].ToString();
+                if (dr["ID_kayıt_no"] != DBNull.Value)
+                {
+                    idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
+                    desimalNo = dr["desimal_no"].ToString();
 
-                if (dr["proje_açıklaması"] != DBNull.Value)
-                {
-                    Aciklama = dr["proje_açıklaması"].ToString();
+                    if (dr["proje_açıklaması"] != DBNull.Value)
+                    {
+                        Aciklama = dr["proje_açıklaması"].ToString();
+                    }
+                    else
+                    {
+                        Aciklama = null;
+                    }
+                    if (dr["onay_no"] != DBNull.Value)
+                    {
+                        onayNo = dr["onay_no"].ToString();
+                    }
+                    else
+                    {
+                        onayNo = null;
+                    }
+                    turu = ".tif";
+                    barkod = null;
+                    if (dr["onay_tarihi"] != DBNull.Value)
+                    {
+                        onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"]));
+                    }
+                    else
+                    {
+                        onayTarihi = null;
+                    }
+                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
                 }
-                else
-                {
-                    Aciklama = null;
-                }
-                if (dr["onay_no"] != DBNull.Value)
-                {
-                    onayNo = dr["onay_no"].ToString();
-                }
-                else
-                {
-                    onayNo = null;
-                }
-                turu = ".tif";
-                barkod = null;
-                if (dr["onay_tarihi"] != DBNull.Value)
-                {
-                    onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"]));
-                }
-                else
-                {
-                    onayTarihi = null;
-                }
-                fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+                dataGridView4.DataSource = dosyaArsiv;
+                tabControl1.SelectedIndex = 5;
+                
             }
 
             foreach (DataRow dr in pdfFilesDT.Rows)
             {
-                idKayit = Convert.ToInt32(dr["id_kayit_no"]);
-                desimalNo = dr["desimal_no"].ToString();
-                Aciklama = null;
-                onayNo = null;
-                turu = ".pdf";
-                if (dr["barkod_no"] != DBNull.Value)
+                if (dr["id_kayit_no"] != DBNull.Value)
                 {
-                    barkod = dr["barkod_no"].ToString();
+                    idKayit = Convert.ToInt32(dr["id_kayit_no"]);
+                    desimalNo = dr["desimal_no"].ToString();
+                    Aciklama = null;
+                    onayNo = null;
+                    turu = ".pdf";
+                    if (dr["barkod_no"] != DBNull.Value)
+                    {
+                        barkod = dr["barkod_no"].ToString();
+                    }
+                    else
+                    {
+                        barkod = null;
+                    }
+                    onayTarihi = null;
+                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
                 }
-                else
-                {
-                    barkod = null;
-                }
-                onayTarihi = null;
-                fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod);
+                
             }
         }
 
@@ -399,7 +409,7 @@ namespace file_archiver
                     rowIndex = 2 + index;
                     row = tiffFilesDT.NewRow();
 
-                    if (Convert.ToInt32(((Range)worksheet_1.Cells[rowIndex, 1]).Value2)>0)
+                    if (Convert.ToInt32(((Range)worksheet_1.Cells[rowIndex, 1]).Value2)>=1)
                     {
                         row[0] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 1]).Value2);
                         row[1] = Convert.ToString(((Range)worksheet_1.Cells[rowIndex, 2]).Value2);
@@ -421,7 +431,7 @@ namespace file_archiver
                 {
                     rowIndex = 2 + index;
                     row = pdfFilesDT.NewRow();
-                    if (Convert.ToInt32(((Range)worksheet_2.Cells[rowIndex, 1]).Value2>0)
+                    if (Convert.ToInt32(((Range)worksheet_2.Cells[rowIndex, 1]).Value2>=1))
                     {
                         row[0] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 1]).Value2);
                         row[1] = Convert.ToString(((Range)worksheet_2.Cells[rowIndex, 2]).Value2);
@@ -674,21 +684,7 @@ namespace file_archiver
         }
 
         //second worker for excel progress watch
-        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-        }
-
-        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressBar1.Value = e.ProgressPercentage;
-        }
-
-        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            Console.Write("BG worker 2 work completed!");
-        }
-
+       
         private void button3_Click(object sender, EventArgs e)
         {
             string path = mainPath + comboBox1.SelectedItem.ToString() + "\\";
