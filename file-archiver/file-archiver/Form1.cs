@@ -94,6 +94,7 @@ namespace file_archiver
             dosyaArsiv.Columns.Add("barkod_no");
             dosyaArsiv.Columns.Add("il_id");
             dosyaArsiv.Columns.Add("ilce_id");
+            dosyaArsiv.Columns.Add("exists");
         }
 
         private void mergeTables()
@@ -172,6 +173,15 @@ namespace file_archiver
                 }
                 
             }
+        }
+
+        private void updateDosyaArsivDT(string dosyaDesimal, string onayNumarasi, DateTime? onayTarihi)
+        {   dataGridView4.DataSource = null;
+            foreach (DataRow dr in dosyaArsiv.Select("desimal_no = '"+dosyaDesimal+"' and onay_no = '"+onayNumarasi+"' and onay_tarihi = '"+onayTarihi+"'"))
+            {
+                dr["exists"] = 1;
+            }
+            dataGridView4.DataSource = dosyaArsiv;
         }
 
         private void StartForm()
@@ -595,7 +605,7 @@ namespace file_archiver
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             int rowNumber = 1;
-            foreach (DataRow row in tiffFilesDT.Rows)
+            foreach (DataRow row in dosyaArsiv.Rows)
             {
                 
                 int? idKayit, onayNo, ilId, ilceId;
