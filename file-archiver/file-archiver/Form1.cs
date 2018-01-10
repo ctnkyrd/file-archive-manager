@@ -507,15 +507,26 @@ namespace file_archiver
 
         public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi)
         {
+            string SqlCmdText;
             try
             {
+                if (onayTarihi == "")
+                {
+                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "', NULL," + dosyaNo + ")";
+                }
+                else
+                {
+                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ")";
+                }
+
                 string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ")"))
+                    using (SqlCommand cmd = new SqlCommand(SqlCmdText, con))
                     {
-                        int oid = cmd.ExecuteNonQuery();
+                        int oid = (int)cmd.ExecuteScalar();
+                        con.Close();
                         return oid;
                     }
                 }
@@ -531,6 +542,11 @@ namespace file_archiver
         {
             try
             {
+                if (onayTarihi == "")
+                {
+                    onayTarihi = null;
+                }
+
                 string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
                 using (SqlConnection con = new SqlConnection(conString))
                 {
@@ -727,7 +743,7 @@ namespace file_archiver
                         //Search for tiff file
                         filePath = dosyaArsiv_path(idKayit.ToString(), turu);
                         row[9] = 0;
-                        checkNInsert(1, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
+                        insertIntoDosyaArsiv(1, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
                     }
                 }
                 else
