@@ -505,6 +505,64 @@ namespace file_archiver
             
         }
 
+        public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi)
+        {
+            try
+            {
+                string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ")"))
+                    {
+                        int oid = cmd.ExecuteNonQuery();
+                        return oid;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
+        //Not used for speedUp reasons
+        public int checkNInsert(int kurulId, int ilId, int ilceId,int dosyaNo,string desimalNo, string onayKodu, string onayTarihi)
+        {
+            try
+            {
+                string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '" + desimalNo+"'", con))
+                    {
+                        using (IDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                return 0;
+                            }
+                            else
+                            {
+                                using (SqlCommand icmd = new SqlCommand("INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) VALUES ("+kurulId+", "+ilId+","+ilceId+",'"+desimalNo+"','"+onayKodu+"','"+onayTarihi+"',"+dosyaNo+")"))
+                                {
+                                    int oid = icmd.ExecuteNonQuery();
+                                    return oid;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (textBox1.BackColor == Color.LightGreen)
@@ -660,16 +718,16 @@ namespace file_archiver
                 {
                     if (isExists(desimalNo, onayNo.ToString(), onayTarihiSQL))
                     {
-                        Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
-                        row[9] = 1;
+                        row[9] = 1;//existence!
                         filePath = dosyaArsiv_path(idKayit.ToString(), turu);
-                        row[10] = filePath;
+                        row[10] = filePath;//filepath
                     }
                     else
                     {
                         //Search for tiff file
                         filePath = dosyaArsiv_path(idKayit.ToString(), turu);
                         row[9] = 0;
+                        checkNInsert(1, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
                     }
                 }
                 else
