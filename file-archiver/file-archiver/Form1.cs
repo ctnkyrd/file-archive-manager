@@ -656,21 +656,28 @@ namespace file_archiver
                 ilceId = Convert.ToInt32(row[8]);
 
 
-                //check db if record is there?
-                if (isExists(desimalNo,onayNo.ToString(), onayTarihiSQL))
+                if (turu == ".tif")
                 {
-                    Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
-                    row[9] = 1;
+                    if (isExists(desimalNo, onayNo.ToString(), onayTarihiSQL))
+                    {
+                        Console.WriteLine(desimalNo + idKayit.ToString() + " Kayıt Veritabanında Mevcut");
+                        row[9] = 1;
+                        filePath = dosyaArsiv_path(idKayit.ToString(), turu);
+                        row[10] = filePath;
+                    }
+                    else
+                    {
+                        //Search for tiff file
+                        filePath = dosyaArsiv_path(idKayit.ToString(), turu);
+                        row[9] = 0;
+                    }
                 }
                 else
                 {
-                    //Search for tiff file
-                    filePath = dosyaArsiv_path(idKayit.ToString(), turu);
-                    Console.WriteLine(dosyaArsiv_path(idKayit.ToString(), turu));
-                    row[9] = 0;
-                    row[10] = filePath;
-
+                    //something for .pdf files
                 }
+                
+
 
                 //progressbar precentage increment
                 rowNumber++;
