@@ -321,7 +321,7 @@ namespace file_archiver
             }
         }
 
-        private bool isExists(string dosyaDesimal, string onayNo, string onayTarihi)
+        private bool isExists(string dosyaDesimal)
         {
             try
             {
@@ -329,7 +329,7 @@ namespace file_archiver
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+ "' AND PROJE_ONAY_SAYISI = '" + onayNo + "' AND PROJE_ONAY_TARIHI ='"+ onayTarihi+"'", con))
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+"'", con))
                     {                       
                         using (IDataReader dr = cmd.ExecuteReader())
                         {
@@ -508,15 +508,16 @@ namespace file_archiver
         public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi)
         {
             string SqlCmdText;
+            string kayitTarihi = Convert.ToString(DateTime.Now);
             try
             {
                 if (onayTarihi == "")
                 {
-                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "', NULL," + dosyaNo + ")";
+                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIHI) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "', NULL," + dosyaNo + ", "+ kayitTarihi + ")";
                 }
                 else
                 {
-                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ")";
+                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIHI) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ", " + kayitTarihi + ")";
                 }
 
                 string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
@@ -537,40 +538,29 @@ namespace file_archiver
                 throw;
             }
         }
-        //Not used for speedUp reasons
-        public int checkNInsert(int kurulId, int ilId, int ilceId,int dosyaNo,string desimalNo, string onayKodu, string onayTarihi)
+
+        public List<int> checkFileinDb(string dosyaDesimalNo)
         {
             try
             {
-                if (onayTarihi == "")
-                {
-                    onayTarihi = null;
-                }
-
+                List<int> DAobjectids = new List<int>();
+                string SqlCmdText = "SELECT OBJECTID FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimalNo+"'";
                 string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '" + desimalNo+"'", con))
+                    using (SqlCommand cmd = new SqlCommand(SqlCmdText, con))
                     {
                         using (IDataReader dr = cmd.ExecuteReader())
                         {
-                            if (dr.Read())
+                            while (dr.Read())
                             {
-                                return 0;
+                                DAobjectids.Add(Convert.ToInt32(dr[0]));
                             }
-                            else
-                            {
-                                using (SqlCommand icmd = new SqlCommand("INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO) VALUES ("+kurulId+", "+ilId+","+ilceId+",'"+desimalNo+"','"+onayKodu+"','"+onayTarihi+"',"+dosyaNo+")"))
-                                {
-                                    int oid = icmd.ExecuteNonQuery();
-                                    return oid;
-                                }
-                            }
+                            return DAobjectids;
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -729,10 +719,12 @@ namespace file_archiver
                 ilId = Convert.ToInt32(row[7]);
                 ilceId = Convert.ToInt32(row[8]);
 
+                //check trial
+                checkFileinDb(desimalNo);
 
                 if (turu == ".tif")
                 {
-                    if (isExists(desimalNo, onayNo.ToString(), onayTarihiSQL))
+                    if (isExists(desimalNo))
                     {
                         row[9] = 1;//existence!
                         filePath = dosyaArsiv_path(idKayit.ToString(), turu);
