@@ -825,6 +825,7 @@ namespace file_archiver
             buttonQDT.Enabled = true;
             dataGridView4.DataSource = null;
             dataGridView4.DataSource = dosyaArsiv;
+            logging("All Process Completed Successfully!!");
         }
 
         //second worker for excel progress watch
