@@ -873,6 +873,12 @@ namespace file_archiver
             buttonDbConnect.Enabled = true;
         }
 
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+            richTextBox1.ScrollToCaret();
+        }
+
         //2nd bg worker
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
