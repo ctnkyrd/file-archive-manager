@@ -321,7 +321,7 @@ namespace file_archiver
             }
         }
 
-        private bool isExists(string dosyaDesimal)
+        private bool isExists(string dosyaDesimal, int dosyaKodu)
         {
             try
             {
@@ -329,7 +329,7 @@ namespace file_archiver
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+"'", con))
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM DOSYA_ARSIV WHERE DOSYA_DESIMAL = '"+dosyaDesimal+"' and KAYIT_NO="+dosyaKodu, con))
                     {                       
                         using (IDataReader dr = cmd.ExecuteReader())
                         {
@@ -532,16 +532,21 @@ namespace file_archiver
                         int oid = (int)cmd.ExecuteScalar();
                         
                         string eklerDosya = "~/Ekler/Dosyalar/DOSYA_ARSIV/" + oid.ToString()+"/";
-                        string dosyalarQueryString = "INSERT INTO DOSYALAR (ADI, ACIKLAMA, KAYIT_TARIH, DOSYA_YOLU, CONTENT_TYPE, CONTENT_LENGTH, FILE_TYPE, FILE_NAME, ISURL, ILGILITABLO, ILGILITABLO_VERIKODU, XML_TEMPLATE, XML) VALUES ('" + dosyaNo + ".tif' ,'Auto Upload','" + kayitTarihi + "','" + eklerDosya+"','image/tiff'," + fileLength + ",'.tif','" + dosyaNo + ".tif',1,'DOSYA_ARSIV'," + oid + ",'Projeler/Projeler.xml','<VALUES><AdSoyad><![CDATA[]]></AdSoyad><VerildigiBirim><![CDATA[]]></VerildigiBirim></VALUES>')";
+                        string dosyalarQueryString = "INSERT INTO DOSYALAR (ADI, ACIKLAMA, KAYIT_TARIH, DOSYA_YOLU, CONTENT_TYPE, CONTENT_LENGTH, FILE_TYPE, FILE_NAME, ISURL, ILGILITABLO, ILGILITABLO_VERIKODU, XML_TEMPLATE, XML) output inserted.DOSYA_KODU VALUES ('" + dosyaNo + ".tif' ,'Auto Upload','" + kayitTarihi + "','" + eklerDosya+"','image/tiff'," + fileLength + ",'.tif','" + dosyaNo + ".tif',1,'DOSYA_ARSIV'," + oid + ",'Projeler/Projeler.xml','<VALUES><AdSoyad><![CDATA[]]></AdSoyad><VerildigiBirim><![CDATA[]]></VerildigiBirim></VALUES>')";
 
                         //try
+                        int oid2 = -1;
                         using (SqlCommand cmd2 = new SqlCommand(dosyalarQueryString, con))
                         {
-                            cmd2.ExecuteNonQuery();
+                            oid2 = (int)cmd2.ExecuteScalar();
                         }
                         con.Close();
-                        File.Copy(fullFilePath, "E:\\netcadweb\\TUES\\Ekler\\Dosyalar\\DOSYA_ARSIV\\" + oid.ToString()+".tif");
-                        logging("E:\\netcadweb\\TUES\\Ekler\\Dosyalar\\DOSYA_ARSIV\\" + oid.ToString() + ".tif Copied!");
+
+                        string mkDir = "E:\\netcadweb\\TUES\\Ekler\\Dosyalar\\DOSYA_ARSIV\\" + oid.ToString();
+                        System.IO.Directory.CreateDirectory(mkDir);
+
+                        File.Copy(fullFilePath, mkDir+"\\"+ oid2.ToString() + ".tif");
+                        logging(oid2.ToString() + ".tif Copied!");
                         //try
                         return oid;
 
@@ -551,7 +556,7 @@ namespace file_archiver
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                logging(ex.ToString());
                 throw;
             }
         }
@@ -739,9 +744,9 @@ namespace file_archiver
                 //check trial
                 //checkFileinDb(desimalNo);
 
-                if (turu == ".tif")
+                if (turu == ".tif" && !isExists(desimalNo, Convert.ToInt32(idKayit)))
                 {
-                    insertIntoDosyaArsiv(1, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
+                    insertIntoDosyaArsiv(41, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
 
                     //if (isExists(desimalNo))
                     //{
