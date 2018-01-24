@@ -106,72 +106,94 @@ namespace file_archiver
 
             foreach (DataRow dr in tiffFilesDT.Rows)
             {
-                if (dr["ID_kayıt_no"] != DBNull.Value)
-                {
-                    idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
-                    desimalNo = dr["desimal_no"].ToString();
-                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
 
-                    //Select relational values from ililcekod excel
-                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
-                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
-                    if (dr["proje_açıklaması"] != DBNull.Value)
+                try
+                {
+                    if (dr["ID_kayıt_no"] != DBNull.Value)
                     {
-                        Aciklama = dr["proje_açıklaması"].ToString();
+                        idKayit = Convert.ToInt32(dr["ID_kayıt_no"]);
+                        desimalNo = dr["desimal_no"].ToString();
+                        desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+
+                        //Select relational values from ililcekod excel
+                        ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
+                        ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
+                        if (dr["proje_açıklaması"] != DBNull.Value)
+                        {
+                            Aciklama = dr["proje_açıklaması"].ToString();
+                        }
+                        else
+                        {
+                            Aciklama = null;
+                        }
+                        if (dr["onay_no"] != DBNull.Value)
+                        {
+                            onayNo = dr["onay_no"].ToString();
+                        }
+                        else
+                        {
+                            onayNo = null;
+                        }
+                        turu = ".tif";
+                        barkod = null;
+                        if (dr["onay_tarihi"] != DBNull.Value)
+                        {
+                            onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"])).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                        }
+                        else
+                        {
+                            onayTarihi = null;
+                        }
+                        fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod, ilId, ilceId);
                     }
-                    else
-                    {
-                        Aciklama = null;
-                    }
-                    if (dr["onay_no"] != DBNull.Value)
-                    {
-                        onayNo = dr["onay_no"].ToString();
-                    }
-                    else
-                    {
-                        onayNo = null;
-                    }
-                    turu = ".tif";
-                    barkod = null;
-                    if (dr["onay_tarihi"] != DBNull.Value)
-                    {
-                        onayTarihi = DateTime.FromOADate(Convert.ToDouble(dr["onay_tarihi"])).ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    }
-                    else
-                    {
-                        onayTarihi = null;
-                    }
-                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod, ilId,ilceId);
+                    dataGridView4.DataSource = dosyaArsiv;
+                    tabControl1.SelectedIndex = 5;
                 }
-                dataGridView4.DataSource = dosyaArsiv;
-                tabControl1.SelectedIndex = 5;
+                catch (Exception e)
+                {
+                    logging(e.ToString());
+                }
+
+
+                
                 
             }
             foreach (DataRow dr in pdfFilesDT.Rows)
             {
-                if (dr["id_kayit_no"] != DBNull.Value)
-                {
-                    idKayit = Convert.ToInt32(dr["id_kayit_no"]);
-                    desimalNo = dr["desimal_no"].ToString();
-                    desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
 
-                    //Select relational values from ililcekod excel
-                    ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
-                    ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
-                    Aciklama = null;
-                    onayNo = null;
-                    turu = ".pdf";
-                    if (dr["barkod_no"] != DBNull.Value)
+                try
+                {
+                    if (dr["id_kayit_no"] != DBNull.Value)
                     {
-                        barkod = dr["barkod_no"].ToString();
+                        idKayit = Convert.ToInt32(dr["id_kayit_no"]);
+                        desimalNo = dr["desimal_no"].ToString();
+                        desimalSelection = desimalNo.Split('.')[0] + "." + desimalNo.Split('.')[1];
+
+                        //Select relational values from ililcekod excel
+                        ilId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["il_id"]);
+                        ilceId = Convert.ToInt32(ilIlce.Select("dosya_desimal_kodu = '" + desimalSelection + "'")[0]["ilce_id"]);
+                        Aciklama = null;
+                        onayNo = null;
+                        turu = ".pdf";
+                        if (dr["barkod_no"] != DBNull.Value)
+                        {
+                            barkod = dr["barkod_no"].ToString();
+                        }
+                        else
+                        {
+                            barkod = null;
+                        }
+                        onayTarihi = null;
+                        fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod, ilId, ilceId);
                     }
-                    else
-                    {
-                        barkod = null;
-                    }
-                    onayTarihi = null;
-                    fillDosyaArsivUnionTableColumns(idKayit, desimalNo, Aciklama, onayNo, onayTarihi, turu, barkod,ilId,ilceId);
                 }
+                catch (Exception e)
+                {
+
+                    logging(e.ToString());
+                }
+
+                
                 
             }
         }
@@ -505,60 +527,80 @@ namespace file_archiver
             
         }
 
-        public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi)
+        public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi, string dosyaTuru, string barkodNo)
         {
             string SqlCmdText;
             string kayitTarihi = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            string fullFilePath = dosyalarPath + desimalNo + "\\" + dosyaNo + ".tif";
-            int fileLength = Convert.ToInt32(new System.IO.FileInfo(fullFilePath).Length);
+            string fullFilePath = dosyalarPath + desimalNo + "\\" + dosyaNo + dosyaTuru;
 
-            try
+            string contentType = "image/tiff";
+
+
+            if (dosyaTuru == ".pdf")
             {
-                if (onayTarihi == "")
-                {
-                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIH) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "', NULL," + dosyaNo + ", '"+ kayitTarihi + "')";
-                }
-                else
-                {
-                    SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIH) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ", '" + kayitTarihi + "')";
-                }
+                contentType = "application.pdf";
+                dosyaNo = Convert.ToInt32(barkodNo);
+            }
 
-                string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
-                using (SqlConnection con = new SqlConnection(conString))
+            if (File.Exists(fullFilePath))
+            {
+                int fileLength = Convert.ToInt32(new System.IO.FileInfo(fullFilePath).Length);
+
+                try
                 {
-                    con.Open();
-                    using (SqlCommand cmd = new SqlCommand(SqlCmdText, con))
+                    if (onayTarihi == "")
                     {
-                        int oid = (int)cmd.ExecuteScalar();
-                        
-                        string eklerDosya = "~/Ekler/Dosyalar/DOSYA_ARSIV/" + oid.ToString()+"/";
-                        string dosyalarQueryString = "INSERT INTO DOSYALAR (ADI, ACIKLAMA, KAYIT_TARIH, DOSYA_YOLU, CONTENT_TYPE, CONTENT_LENGTH, FILE_TYPE, FILE_NAME, ISURL, ILGILITABLO, ILGILITABLO_VERIKODU, XML_TEMPLATE, XML) output inserted.DOSYA_KODU VALUES ('" + dosyaNo + ".tif' ,'Auto Upload','" + kayitTarihi + "','" + eklerDosya+"','image/tiff'," + fileLength + ",'.tif','" + dosyaNo + ".tif',1,'DOSYA_ARSIV'," + oid + ",'Projeler/Projeler.xml','<VALUES><AdSoyad><![CDATA[]]></AdSoyad><VerildigiBirim><![CDATA[]]></VerildigiBirim></VALUES>')";
-
-                        //try
-                        int oid2 = -1;
-                        using (SqlCommand cmd2 = new SqlCommand(dosyalarQueryString, con))
-                        {
-                            oid2 = (int)cmd2.ExecuteScalar();
-                        }
-                        con.Close();
-
-                        string mkDir = "E:\\netcadweb\\TUES\\Ekler\\Dosyalar\\DOSYA_ARSIV\\" + oid.ToString();
-                        System.IO.Directory.CreateDirectory(mkDir);
-
-                        File.Copy(fullFilePath, mkDir+"\\"+ oid2.ToString() + ".tif");
-                        logging(oid2.ToString() + ".tif Copied!");
-                        //try
-                        return oid;
-
+                        SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIH) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "', NULL," + dosyaNo + ", '" + kayitTarihi + "')";
+                    }
+                    else
+                    {
+                        SqlCmdText = "INSERT INTO DOSYA_ARSIV (KURUL_ID, IL_ID, ILCE_ID, DOSYA_DESIMAL, PROJE_ONAY_SAYISI,PROJE_ONAY_TARIHI, KAYIT_NO, KAYIT_TARIH) output inserted.OBJECTID VALUES (" + kurulId + ", " + ilId + "," + ilceId + ",'" + desimalNo + "','" + onayKodu + "','" + onayTarihi + "'," + dosyaNo + ", '" + kayitTarihi + "')";
                     }
 
+                    string conString = "server=" + dbHost + ";uid=" + dbUser + ";pwd=" + dbPass + ";database=" + dbName;
+                    using (SqlConnection con = new SqlConnection(conString))
+                    {
+                        con.Open();
+                        using (SqlCommand cmd = new SqlCommand(SqlCmdText, con))
+                        {
+                            int oid = (int)cmd.ExecuteScalar();
+
+                            string eklerDosya = "~/Ekler/Dosyalar/DOSYA_ARSIV/" + oid.ToString() + "/";
+                            string dosyalarQueryString = "INSERT INTO DOSYALAR (ADI, ACIKLAMA, KAYIT_TARIH, DOSYA_YOLU, CONTENT_TYPE, CONTENT_LENGTH, FILE_TYPE, FILE_NAME, ISURL, ILGILITABLO, ILGILITABLO_VERIKODU, XML_TEMPLATE, XML) output inserted.DOSYA_KODU VALUES ('" + dosyaNo + dosyaTuru+"' ,'Auto Upload','" + kayitTarihi + "','" + eklerDosya + "','"+contentType+"'," + fileLength + ",'"+dosyaTuru+"','" + dosyaNo +dosyaTuru+ "',1,'DOSYA_ARSIV'," + oid + ",'Projeler/Projeler.xml','<VALUES><AdSoyad><![CDATA[]]></AdSoyad><VerildigiBirim><![CDATA[]]></VerildigiBirim></VALUES>')";
+
+                            //try
+                            int oid2 = -1;
+                            using (SqlCommand cmd2 = new SqlCommand(dosyalarQueryString, con))
+                            {
+                                oid2 = (int)cmd2.ExecuteScalar();
+                            }
+                            con.Close();
+
+                            string mkDir = "E:\\netcadweb\\TUES\\Ekler\\Dosyalar\\DOSYA_ARSIV\\" + oid.ToString();
+                            System.IO.Directory.CreateDirectory(mkDir);
+
+                            File.Copy(fullFilePath, mkDir + "\\" + oid2.ToString() + dosyaTuru);
+                            logging(oid2.ToString() + dosyaTuru + " Copied!");
+                            //try
+                            return oid;
+
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logging(ex.ToString());
+                    throw;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                logging(ex.ToString());
-                throw;
+                logging(fullFilePath + " Not Exists!");
+                return -1;
             }
+            
+            
         }
 
         public List<int> checkFileinDb(string dosyaDesimalNo)
@@ -744,27 +786,24 @@ namespace file_archiver
                 //check trial
                 //checkFileinDb(desimalNo);
 
-                if (turu == ".tif" && !isExists(desimalNo, Convert.ToInt32(idKayit)))
+                if (turu == ".pdf")
                 {
-                    insertIntoDosyaArsiv(41, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
+                    idKayit = Convert.ToInt32(barkodNo);
+                }
 
-                    //if (isExists(desimalNo))
-                    //{
-                    //    row[9] = 1;//existence!
-                    //    filePath = dosyaArsiv_path(idKayit.ToString(), turu);
-                    //    row[10] = filePath;//filepath
-                    //}
-                    //else
-                    //{
-                    //    //Search for tiff file
-                    //    filePath = dosyaArsiv_path(idKayit.ToString(), turu);
-                    //    row[9] = 0;
-                    //    insertIntoDosyaArsiv(1, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL);
-                    //}
+
+                if (!isExists(desimalNo, Convert.ToInt32(idKayit)))
+                {
+                    int vtKurulId = Convert.ToInt32(textBox4.Text);
+                    if (vtKurulId < 1)
+                    {
+                        vtKurulId = -1;
+                    }
+                    insertIntoDosyaArsiv(vtKurulId, Convert.ToInt32(ilId), Convert.ToInt32(ilceId), Convert.ToInt32(idKayit), desimalNo, onayNo.ToString(), onayTarihiSQL, turu, barkodNo);
                 }
                 else
                 {
-                    //something for .pdf files
+                    logging(desimalNo+"-"+idKayit.ToString()+" already on db!");
                 }
                 
 
