@@ -282,11 +282,11 @@ namespace file_archiver
         {
             if (richTextBox1.Text.Length == 0)
             {
-                richTextBox1.Text = DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
+                richTextBox1.Text = DateTime.Now.ToString("[dd-MM-yyy HH:mm:ss]") + "-" + logText;
             }
             else
             {
-                richTextBox1.Text = richTextBox1.Text + Environment.NewLine + DateTime.Now.ToString("[dd-mm-yyy HH:mm:ss]") + "-" + logText;
+                richTextBox1.Text = richTextBox1.Text + Environment.NewLine + DateTime.Now.ToString("[dd-MM-yyy HH:mm:ss]") + "-" + logText;
             }
 
         }
