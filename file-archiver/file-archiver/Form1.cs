@@ -103,7 +103,7 @@ namespace file_archiver
         {
             int idKayit, ilId, ilceId;
             string desimalNo, Aciklama, onayNo, turu, barkod,desimalSelection,onayTarihi;
-
+            desimalNo = "-1";
             foreach (DataRow dr in tiffFilesDT.Rows)
             {
 
@@ -151,7 +151,7 @@ namespace file_archiver
                 }
                 catch (Exception e)
                 {
-                    logging(e.ToString());
+                    logging(desimalNo + "Merge Table Error!");
                 }
 
 
@@ -529,6 +529,7 @@ namespace file_archiver
 
         public int insertIntoDosyaArsiv(int kurulId, int ilId, int ilceId, int dosyaNo, string desimalNo, string onayKodu, string onayTarihi, string dosyaTuru, string barkodNo)
         {
+
             string SqlCmdText;
             string kayitTarihi = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             string fullFilePath = dosyalarPath + desimalNo + "\\" + dosyaNo + dosyaTuru;
@@ -539,7 +540,15 @@ namespace file_archiver
             if (dosyaTuru == ".pdf")
             {
                 contentType = "application.pdf";
-                dosyaNo = Convert.ToInt32(barkodNo);
+                try
+                {
+                    dosyaNo = Convert.ToInt32(barkodNo);
+
+                }
+                catch (Exception e)
+                {
+                    logging(e.ToString());
+                }
             }
 
             if (File.Exists(fullFilePath))
